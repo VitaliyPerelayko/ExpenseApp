@@ -15,28 +15,28 @@ public class AdminPageController {
     }
 
     @AuraEnabled
-    public static String getDataForOfficePage(String office) {
+    public static String getDataForOfficePage(String office, Integer year) {
+        Date startYear = Date.newInstance(year, 1, 1);
+        Date endYear = Date.newInstance(year, 12, 31);
         // list of contactIds from this office
-        List<Id> userIds = new List<Id>();
+        List<Id> keeperIds = new List<Id>();
+        Map<Id, String> keepersLastNames = new Map<Id, String>();
         Map<Id, Contact> contactMap = UtilMethods.contactsOfficeMap();
         for (Id cId : contactMap.keySet()) {
             if (contactMap.get(cId).Office__c == office) {
-                userIds.add(cId);
+                keeperIds.add(cId);
+                keepersLastNames.put(cId, contactMap.get(cId).LastName);
             }
         }
-        List<Monthly_Expense__c> monthlyExpenses = [
-                SELECT Id, MonthDate__c, SpentAmount__c, Balance__c, Keeper__c, Reminder__c
+        List<Monthly_Expense__c> monthlyExpenses = new List<Monthly_Expense__c>([
+                SELECT Id, MonthDate__c, SpentAmount__c, Balance__c,
+                (SELECT Id, Amount__c, Description__c, CardDate__c FROM ExpenseCards__r)
                 FROM Monthly_Expense__c
-                WHERE Keeper__c IN :userIds
-                ORDER BY MonthDate__c ASC
-        ];
-        List<Expense_Card__c> expenseCards = [
-                SELECT Id, CardDate__c, Card_Keeper__c, Description__c, Amount__c, MonthlyExpense__c
-                FROM Expense_Card__c
-                WHERE Card_Keeper__c IN :userIds
-                ORDER BY CardDate__c ASC
-        ];
-        return JSON.serialize(AdminPageDTOS.mapOfficeDetailDTO(office, monthlyExpenses, expenseCards));
+                WHERE Keeper__c IN :keeperIds
+                AND MonthDate__c >= :startYear
+                AND MonthDate__c <= :endYear
+        ]);
+        return JSON.serialize(AdminPageDTOS.mapOfficeDetailDTO(office, year, monthlyExpenses, keepersLastNames));
     }
 
     @AuraEnabled
@@ -45,7 +45,7 @@ public class AdminPageController {
             Expense_Card__c ec = new Expense_Card__c(Id = ecId);
             delete ec;
             return 'SUCCESS';
-        } catch (Exception ex){
+        } catch (Exception ex) {
             return ex.getMessage();
         }
     }

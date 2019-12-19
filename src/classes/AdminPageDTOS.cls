@@ -18,11 +18,13 @@ public class AdminPageDTOS {
 
     public class OfficeDetailDTO {
         public String office { get; set; }
+        public Integer year { get; set; }
         public List<KeeperDTO> keeperList { get; set; }
     }
 
     public class KeeperDTO {
         public Id keeperId { get; set; }
+        public String lastName { get; set; }
         public List<ExpensePageDTOS.MonthExpenseDTO> monthExpenses { get; set; }
     }
 
@@ -49,41 +51,29 @@ public class AdminPageDTOS {
         return expensesForYearDTOS;
     }
 
-    public static OfficeDetailDTO mapOfficeDetailDTO(String office, List<Monthly_Expense__c> monthlyExpenses,
-            List<Expense_Card__c> expenseCards) {
+    public static OfficeDetailDTO mapOfficeDetailDTO(String office, Integer year,
+            List<Monthly_Expense__c> monthlyExpenses, Map<Id, String> keeperLastNames) {
         OfficeDetailDTO officeDetail = new OfficeDetailDTO();
         officeDetail.office = office;
+        officeDetail.year = year;
         List<KeeperDTO> listOfKeeperDTOs = new List<AdminPageDTOS.KeeperDTO>();
         // map userId  =>  List<Monthly_Expense__c>
-        Map<Id, Map<id, Monthly_Expense__c>> monthlyExpenseMap = new Map<Id, Map<Id, Monthly_Expense__c>>();
-        // map userId  =>  List<Expense_Card__c>
-        Map<Id, List<Expense_Card__c>> expenseCardMap = new Map<Id, List<Expense_Card__c>>();
+        Map<Id, List<Monthly_Expense__c>> monthlyExpenseMap = new Map<Id, List<Monthly_Expense__c>>();
         // sort monthly expense by keeper
         for (Monthly_Expense__c me : monthlyExpenses) {
             Id keeperId = me.Keeper__c;
-            Map<Id, Monthly_Expense__c> monthlyExpensesOfKeeper = monthlyExpenseMap.get(keeperId);
+            List<Monthly_Expense__c> monthlyExpensesOfKeeper = monthlyExpenseMap.get(keeperId);
             if (monthlyExpensesOfKeeper == null) {
-                monthlyExpensesOfKeeper = new Map<Id, Monthly_Expense__c>();
-                monthlyExpensesOfKeeper.put(me.Id, me);
+                monthlyExpensesOfKeeper = new List<Monthly_Expense__c>();
+                monthlyExpensesOfKeeper.add(me);
                 monthlyExpenseMap.put(keeperId, monthlyExpensesOfKeeper);
             } else {
-                monthlyExpensesOfKeeper.put(me.Id, me);
-            }
-        }
-        // sort expense cards by keeper
-        for (Expense_Card__c ec : expenseCards) {
-            Id keeperId = ec.Card_Keeper__c;
-            List<Expense_Card__c> expenseCardsOfKeeper = expenseCardMap.get(keeperId);
-            if (expenseCardsOfKeeper == null) {
-                expenseCardsOfKeeper = new List<Expense_Card__c>();
-                expenseCardsOfKeeper.add(ec);
-                expenseCardMap.put(keeperId, expenseCardsOfKeeper);
-            } else {
-                expenseCardsOfKeeper.add(ec);
+                monthlyExpensesOfKeeper.add(me);
             }
         }
         for (Id keeperId : monthlyExpenseMap.keySet()) {
-            listOfKeeperDTOs.add(createKeeperDTO(keeperId, monthlyExpenseMap.get(keeperId), expenseCardMap.get(keeperId)));
+            String lastName = keeperLastNames.get(keeperId);
+            listOfKeeperDTOs.add(createKeeperDTO(keeperId, lastName ,monthlyExpenseMap.get(keeperId)));
         }
         officeDetail.keeperList = listOfKeeperDTOs;
         return officeDetail;
@@ -146,11 +136,12 @@ public class AdminPageDTOS {
         return officeDTOS;
     }
 
-    private static KeeperDTO createKeeperDTO(Id keeperId, Map<Id, Monthly_Expense__c> monthlyExpensesOfKeeper,
-            List<Expense_Card__c> expenseCardsOfKeeper) {
+    private static KeeperDTO createKeeperDTO(Id keeperId, String lastName,
+            List<Monthly_Expense__c> monthlyExpensesOfKeeper) {
         KeeperDTO keeperDTO = new KeeperDTO();
         keeperDTO.keeperId = keeperId;
-        keeperDTO.monthExpenses = ExpensePageDTOS.mapToDTOMonthlyExpense(monthlyExpensesOfKeeper, expenseCardsOfKeeper);
+        keeperDTO.lastName = lastName;
+        keeperDTO.monthExpenses = ExpensePageDTOS.mapToDTOMonthlyExpense(monthlyExpensesOfKeeper);
         return keeperDTO;
     }
 }

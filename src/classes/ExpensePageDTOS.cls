@@ -33,24 +33,15 @@ public class ExpensePageDTOS {
     }
 
     public static List<ExpensePageDTOS.MonthExpenseDTO> mapToDTOMonthlyExpense(
-            Map<Id, Monthly_Expense__c> monthlyExpenses, List<Expense_Card__c> expenseCards) {
+            List<Monthly_Expense__c> monthlyExpenses) {
         // list to return
         List<ExpensePageDTOS.MonthExpenseDTO> monthExpenseDTOS = new List<ExpensePageDTOS.MonthExpenseDTO>();
-        // temp map month expense Id => List<ExpenseCardDTO>
-        Map<Id, List<ExpensePageDTOS.ExpenseCardDTO>> tempMap = new Map<Id, List<ExpensePageDTOS.ExpenseCardDTO>>();
-        for (Expense_Card__c ec : expenseCards) {
-            Id meId = ec.MonthlyExpense__c;
-            List<ExpensePageDTOS.ExpenseCardDTO> expenseCardDTOS = tempMap.get(meId);
-            if (expenseCardDTOS == null) {
-                expenseCardDTOS = new List<ExpensePageDTOS.ExpenseCardDTO>();
-                expenseCardDTOS.add(ExpensePageDTOS.mapExpenseCard(ec));
-                tempMap.put(meId, expenseCardDTOS);
-            } else {
-                expenseCardDTOS.add(ExpensePageDTOS.mapExpenseCard(ec));
+        for (Monthly_Expense__c me : monthlyExpenses) {
+            List<ExpensePageDTOS.ExpenseCardDTO> expenseCardDTOS = new List<ExpensePageDTOS.ExpenseCardDTO>();
+            for (Expense_Card__c ec : me.ExpenseCards__r) {
+                expenseCardDTOS.add(mapExpenseCard(ec));
             }
-        }
-        for (Id meId : monthlyExpenses.keySet()) {
-            monthExpenseDTOS.add(ExpensePageDTOS.mapMonthExpense(monthlyExpenses.get(meId), tempMap.get(meId)));
+            monthExpenseDTOS.add(ExpensePageDTOS.mapMonthExpense(me, expenseCardDTOS));
         }
         return monthExpenseDTOS;
     }

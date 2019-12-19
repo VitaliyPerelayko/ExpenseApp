@@ -1,12 +1,12 @@
 public class UtilMethods {
 
 
-    // return map contact Id => Office
+    // return map contact Id => Contact
     public static Map<Id, Contact> contactsOfficeMap() {
         List<String> listOfOffices = getListOfOffices();
         return new Map<Id, Contact>(
         [
-                SELECT Id, Office__c
+                SELECT Id, Office__c, LastName
                 FROM Contact
                 WHERE Office__c IN :listOfOffices AND Admin__c = false
         ]);
