@@ -1,0 +1,18 @@
+.THIS .table-style {
+    display: table;
+    border-spacing: 20px 20px;
+}
+
+.THIS .table-cell {
+    display: table-cell;
+    width: 200px;
+    text-align: left;
+    vertical-align: middle;
+    horiz-align: left;
+}
+
+.THIS .active {
+    border-left-color: mediumblue;
+    border-left-width: 3px;
+    background-color: lightblue;
+}

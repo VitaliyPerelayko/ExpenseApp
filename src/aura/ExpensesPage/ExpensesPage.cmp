@@ -1,0 +1,16 @@
+<aura:component description="ExpensesPage" implements="flexipage:availableForAllPageTypes">
+
+    <aura:attribute name="usrId" type="Id"/>
+    <aura:attribute name="office" type="String"/>
+    <aura:attribute name="number_of_month" type="Integer"/>
+    <aura:attribute name="expense_cards" type="Expense_Card__c[]"/>
+
+    <lightning:card title="{! 'Expanses' + v.office}" class="slds-card__header-title">
+        <aura:set attribute="actions">
+            <lightning:button label="New"/>
+        </aura:set>
+
+
+        <c:NavigationMenu number_of_month="{! v.number_of_month}"/>
+    </lightning:card>
+</aura:component>

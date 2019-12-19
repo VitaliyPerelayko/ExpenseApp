@@ -1,0 +1,9 @@
+.THIS .app-name {
+    font-size: 70px;
+    color: tomato;
+    font-family: "Emoji One";
+}
+
+.THIS .slds-theme--error {
+    font-size: 20px;
+}

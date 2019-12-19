@@ -1,0 +1,16 @@
+# GitIgnore for Salesforce Projects
+# Project Settings and MetaData
+.project
+.settings/
+.metadata
+build.properties
+config
+
+# Apex Log as optional
+apex-scripts/log
+
+# Idea
+/misc.xml
+/modules.xml
+/vcs.xml
+/workspace.xml

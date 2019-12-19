@@ -1,0 +1,29 @@
+<aura:component access="global" controller="AuthController" implements="flexipage:availableForAllPageTypes">
+
+    <aura:attribute name="username" type="String"/>
+    <aura:attribute name="password" type="String"/>
+    <aura:attribute name="is_login_disabled" type="Boolean" default="true"/>
+    <aura:attribute name="is_hide_error" type="Boolean" default="true"/>
+    <aura:attribute name="authToken" type="String"/>
+    <aura:attribute name="error_message" type="String"/>
+
+    <lightning:card class="slds-modal--form">
+        <div class="slds-align_absolute-center">
+            <img src="{! $Resource.assets + '/expenses_icon.png' }" height="100" width="100"/>
+            <lightning:formattedText value="Expense" class="app-name"/>
+        </div>
+        <div class="slds-align_absolute-center" hidden="{! v.is_hide_error}">
+            <lightning:formattedText value="{! v.error_message }" class="slds-theme--error"/>
+        </div>
+        <div>
+            <lightning:input type="email" name="username" value="{! v.username }"
+                             aura:id="inputF" label="Username" required="true"
+                             onchange="{! c.validate }"/>
+            <lightning:input type="password" name="password" value="{! v.password }"
+                             aura:id="inputF" label="Password" required="true"
+                             onchange="{! c.validate }"/>
+            <lightning:button variant="success" label="Login" onclick="{! c.onclick }"
+                              disabled="{! v.is_login_disabled }"/>
+        </div>
+    </lightning:card>
+</aura:component>
