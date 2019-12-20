@@ -1,26 +1,13 @@
-.THIS .slds-navigation-list--vertical {
-    width: 320px;
+.THIS .expense-office-style {
+    color: darkgrey;
+    font-size: 25px;
 }
-
-.THIS .badge1 {
-    margin-left: 40px;
+.THIS .balance-style {
+    font-size: 25px;
+    margin-left: 200px;
 }
-
-.THIS .table-style {
-    display: table;
-    border-spacing: 20px 20px;
-}
-
-.THIS .table-cell {
-    display: table-cell;
-    width: 100px;
-    text-align: left;
-    vertical-align: middle;
-    horiz-align: left;
-}
-
-.THIS .active {
-    border-left-color: mediumblue;
-    border-left-width: 3px;
-    background-color: lightblue;
+.THIS .balance-number-style {
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 10px;
 }

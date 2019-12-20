@@ -1,11 +1,7 @@
-<aura:component description="ExpenseCards">
+<aura:component description="ExpenseCards" implements="flexipage:availableForAllPageTypes">
     <aura:attribute name="month_expense_cards" type="List"/>
     <aura:attribute name="activeSections" type="String"/>
-    <aura:attribute name="columns" type="List" default="[
-        {label: 'Description', fieldName: 'description', type: 'text'},
-        {label: 'Amount', fieldName: 'amount', type: 'currency', cellAttributes: { alignment: 'left' },
-                        typeAttributes: {maximumFractionDigits: 4}}
-     ]"/>
+    <aura:attribute name="columns" type="List"/>
     <aura:attribute name="day_expense_cards" type="Object"/>
 
     <aura:handler name="init" value="{! this }" action="{! c.init}"/>

@@ -13,4 +13,12 @@
 
     monthChanged: function (component, event, helper) {
     },
+
+    newExpenseCard: function (component, event, helper) {
+
+    },
+
+    addMoney: function (component, event, helper) {
+
+    }
 })
