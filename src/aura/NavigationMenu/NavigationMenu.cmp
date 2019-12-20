@@ -1,24 +1,8 @@
-<aura:component description="NavigationMenu" extends="forceCommunity:navigationMenuBase"
-                implements="flexipage:availableForAllPageTypes">
-
-    <aura:attribute name="number_of_month" type="Integer"/>
-    <aura:attribute name="month_stat" type="Object[]" default="[
-    {month:'January', amount:123, income:333, countNumber: 1},
-    {month:'February', amount:123, income:333, countNumber: 2},
-    {month:'March', amount:123, income:333, countNumber: 3}
-    ]"/>
-    <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
-        <ul class="table-style">
-            <aura:iteration items="{!v.month_stat}" var="item">
-                <li>
-                    <a onclick="{! c.onclick }" data-item="{! item.countNumber}"
-                       class="slds-navigation-list--vertical__action slds-text-link--reset">
-                        <lightning:formattedText value="{! item.month }" class="table-cell"/>
-                        <lightning:badge label="{! item.amount }" class="table-cell"/>
-                        <lightning:badge label="{! item.income }" class="table-cell"/>
-                    </a>
-                </li>
-            </aura:iteration>
-        </ul>
+<aura:component description="NavigationMenu" extends="forceCommunity:navigationMenuBase">
+    <aura:attribute name="item" type="Object"/>
+    <div>
+        <lightning:formattedText value="{! item.month }" class="table-cell"/>
+        <lightning:badge label="{! item.amount }" class="table-cell"/>
+        <lightning:badge label="{! item.income }" class="table-cell"/>
     </div>
 </aura:component>

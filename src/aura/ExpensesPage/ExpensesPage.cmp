@@ -1,16 +1,45 @@
-<aura:component description="ExpensesPage" implements="flexipage:availableForAllPageTypes">
+<aura:component description="ExpensesPage"
+                controller="ExpensePageController"
+                implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable">
 
-    <aura:attribute name="usrId" type="Id"/>
+    <aura:attribute name="userId" type="Id"/>
     <aura:attribute name="office" type="String"/>
-    <aura:attribute name="number_of_month" type="Integer"/>
-    <aura:attribute name="expense_cards" type="Expense_Card__c[]"/>
-
+    <aura:attribute name="year" type="Integer"/>
+    <aura:attribute name="years" type="List"/>
+    <!--  month for which content is shown -->
+    <aura:attribute name="selected_month" type="String" default="January"/>
+    <aura:attribute name="menu_elements" type="List"/>
+    <aura:attribute name="expense_cards" type="Map"/>
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <!--  Header  -->
     <lightning:card title="{! 'Expanses' + v.office}" class="slds-card__header-title">
         <aura:set attribute="actions">
-            <lightning:button label="New"/>
+            <lightning:button iconName="action:update" iconPosition="left" label="Income"/>
+            <lightning:button label="New Expense"/>
         </aura:set>
+        <!-- Navigation menu -->
+        <lightning:verticalNavigation selectedItem="{! v.selected_month }"
+                                      onselect="{! c.monthChanged }">
+            <aura:iteration items="{! v.menu_elements }" var="item">
+                <li>
+                    <a>
+                        <lightning:formattedText value="{! item.month }" class="table-cell"/>
+                        <lightning:badge label="{! item.amount }" class="table-cell"/>
+                        <lightning:badge label="{! item.income }" class="table-cell"/>
+                    </a>
+                </li>
+            </aura:iteration>
+        </lightning:verticalNavigation>
+        <!--  Content  -->
+        <lightning:accordion allowMultipleSectionsOpen="true"
+                             activeSectionName="{! v.activeSections }"
+                             onsectiontoggle="{! c.handleSectionToggle }">
+            <aura:iteration items="{! v.expense_cards.v.selected_month }" var="item">
+                <lightning:accordionSection name="{! item.dateOfEC }" label="{! item.dateOfEC }">
 
-
-        <c:NavigationMenu number_of_month="{! v.number_of_month}"/>
+                </lightning:accordionSection>
+            </aura:iteration>
+        </lightning:accordion>
+        <!--  Years -->
     </lightning:card>
 </aura:component>

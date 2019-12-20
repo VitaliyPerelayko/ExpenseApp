@@ -3,11 +3,11 @@ public class AuthController {
     public static final String NO_SUCH_USER = 'There is no any user with such an username';
     public static final String PASSWORD_DOES_NOT_MACH = 'Password doesn\'t mach';
 
-    //TODO add later password encryption
+    //TODO add later password and token encryption
     @AuraEnabled
     public static String login(String username, String password) {
         List<Contact> contacts = [
-                SELECT FirstName, LastName, email, Password__c, Office__c, Admin__c
+                SELECT Id, email, Password__c, Office__c, Admin__c
                 FROM Contact
                 WHERE email = :username
         ];
@@ -16,7 +16,7 @@ public class AuthController {
         }
         for (Contact c : contacts) {
             if (c.Password__c == password) {
-                return generateToken(username);
+                return generateToken(c.Id, c.Admin__c, c.Office__c);
             } else {
                 return PASSWORD_DOES_NOT_MACH;
             }
@@ -24,8 +24,13 @@ public class AuthController {
         return NO_SUCH_USER;
     }
 
-    private static String generateToken(String username) {
-        return 'TOKEN&' + username + '&' + Datetime.now();
+    private static String generateToken(Id userId, Boolean isAdmin, String office) {
+        List<Object> formattingArguments = new List<Object>();
+        formattingArguments.add(userId);
+        formattingArguments.add(isAdmin);
+        formattingArguments.add(office);
+        formattingArguments.add(Datetime.now());
+        return String.format('TOKEN&{0}&{1}&{2}&{3}', formattingArguments);
     }
 
 }

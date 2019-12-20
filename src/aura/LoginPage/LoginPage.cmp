@@ -7,6 +7,8 @@
     <aura:attribute name="authToken" type="String"/>
     <aura:attribute name="error_message" type="String"/>
 
+    <lightning:navigation aura:id="navService"/>
+
     <lightning:card class="slds-modal--form">
         <div class="slds-align_absolute-center">
             <img src="{! $Resource.assets + '/expenses_icon.png' }" height="100" width="100"/>
