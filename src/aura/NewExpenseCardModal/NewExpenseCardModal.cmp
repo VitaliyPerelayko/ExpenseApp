@@ -1,27 +1,36 @@
-<aura:component description="NewExpenseCardModal">
-
-    <aura:attribute name="is_hidden" type="Boolean"/>
+<aura:component description="NewExpenseCardModal" controller="ExpensePageController">
+    <!-- parent attributes -->
+    <aura:attribute name="is_shown" type="Boolean"/>
     <aura:attribute name="user_id" type="Id"/>
-    <aura:attribute name="expense_card" type="Object"/>
+    <aura:attribute name="is_changed" type="Boolean"/>
 
-    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+    <!-- this attributes -->
+    <aura:attribute name="amount" type="Decimal"/>
+    <aura:attribute name="ec_date" type="Date"/>
+    <aura:attribute name="description" type="String"/>
+    <aura:attribute name="is_save_disabled" type="Boolean" default="true"/>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+             aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
         <div class="slds-modal__container">
             <header class="slds-modal__header">
-                <lightning:buttonIcon iconName="utility:close" variant="bare" onclick="{! c.HideMe }"
-                                      alternativeText="Close" class="slds-modal__close" />
-                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Modal Header</h2>
-                <p class="slds-m-top_x-small">Here’s a tagline if you need it. It is allowed to extend across mulitple lines, so I’m making up content to show that to you. It is allowed to
-                    <a href="javascript:void(0);">contain links or be a link</a>.</p>
+                <lightning:buttonIcon iconName="utility:close" variant="bare" onclick="{! c.hideMe }"
+                                      alternativeText="Close" class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Expense Card</h2>
             </header>
             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
-                <p>Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis. Cillum sunt ad dolore quis
-                    aute consequat ipsum magna exercitation reprehenderit magna. Tempor cupidatat consequat elit dolor adipisicing.</p>
-                <p>Dolor eiusmod sunt ex incididunt cillum quis nostrud velit duis sit officia. Lorem aliqua enim laboris do dolor eiusmod officia. Mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident. Eiusmod et adipisicing culpa deserunt nostrud
-                    ad veniam nulla aute est. Labore esse esse cupidatat amet velit id elit consequat minim ullamco mollit enim excepteur ea.</p>
+                <lightning:input label="Amount" aura:id="field" required="true" name="amount"
+                                 placeholder="Amount..." type="number" value="{! v.amount}"
+                                 min="0" formatter="currency" step="0.01" onchange="{! c.onChange}"/>
+                <lightning:input label="Date" aura:id="field" required="true" name="date"
+                                 type="date" value="{! v.ec_date }" onchange="{! c.onChange}"/>
+                <lightning:textarea label="Description" aura:id="field" required="true" name="description"
+                                    value="{! v.description }" placeholder="Ferrari" onchange="{! c.onChange}"/>
             </div>
             <footer class="slds-modal__footer">
-                <button class="slds-button slds-button_neutral">Cancel</button>
-                <button class="slds-button slds-button_brand">Save</button>
+                <lightning:button label="Cancel" title="Hide new expense card window" onclick="{! c.hideMe}"/>
+                <lightning:button label="Save" variant="brand" title="Save new expense card"
+                                  onclick="{! c.saveClicked }" disabled="{! v.is_save_disabled }"/>
             </footer>
         </div>
     </section>

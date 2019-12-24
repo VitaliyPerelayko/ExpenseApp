@@ -20,20 +20,19 @@
             password: pass
         });
         action.setCallback(this, function (response) {
-                if (helper.validateResponse(response)) {
-                    const rtnValue = response.getReturnValue();
-                    console.log(rtnValue);
-                    component.set("v.authToken", rtnValue);
-                    if (rtnValue.startsWith('TOKEN')) {
-                        helper.navigateToUrl(component, event, rtnValue);
-                    } else {
-                        component.set("v.is_login_disabled", true);
-                        component.set("v.is_hide_error", false);
-                        component.set("v.error_message", rtnValue);
-                    }
+            if (helper.validateResponse(response)) {
+                const rtnValue = response.getReturnValue();
+                console.log(rtnValue);
+                component.set("v.authToken", rtnValue);
+                if (rtnValue.startsWith('TOKEN')) {
+                    helper.navigateToUrl(component, event, rtnValue);
+                } else {
+                    component.set("v.is_login_disabled", true);
+                    component.set("v.is_hide_error", false);
+                    component.set("v.error_message", rtnValue);
                 }
             }
-        );
+        });
         $A.enqueueAction(action);
     }
 })

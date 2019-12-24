@@ -5,6 +5,7 @@
       <list>
         <IlluminatedCloudConnection>
           <option name="connectionName" value="ExpenseApp" />
+          <option name="connectionType" value="MDAPI" />
           <option name="defaultModuleName" value="ExpenseApp" />
           <option name="offlineSymbolTablePath" value="$PROJECT_DIR$/IlluminatedCloud/ExpenseApp/OfflineSymbolTable.zip" />
         </IlluminatedCloudConnection>
