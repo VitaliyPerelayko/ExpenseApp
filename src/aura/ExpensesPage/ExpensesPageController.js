@@ -12,13 +12,16 @@
     },
 
     monthChanged: function (component, event, helper) {
+        const month = component.get("v.selected_month");
+        const expenseCards = component.get("v.expense_cards");
+        component.set("v.month_expense_cards", expenseCards.get(month));
     },
 
     newExpenseCard: function (component, event, helper) {
-
+        component.set("v.is_save_shown", true);
     },
 
     addMoney: function (component, event, helper) {
-
+        component.set("v.is_top_up_shown", true);
     }
 })

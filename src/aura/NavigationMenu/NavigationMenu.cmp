@@ -1,17 +1,20 @@
-<aura:component description="NavigationMenu" extends="forceCommunity:navigationMenuBase">
-    <aura:attribute name="selected_month" type="String" default="January"/>
+<aura:component description="NavigationMenu">
+    <aura:attribute name="selected_month" type="Integer"/>
     <aura:attribute name="menu_elements" type="List"/>
 
-    <lightning:verticalNavigation selectedItem="{! v.selected_month }"
-                                  onselect="{! c.monthChanged }">
-        <aura:iteration items="{! v.menu_elements }" var="item">
-            <li>
-                <a>
-                    <lightning:formattedText value="{! item.month }" class="table-cell"/>
-                    <lightning:badge label="{! item.amount }" class="table-cell"/>
-                    <lightning:badge label="{! item.income }" class="table-cell"/>
-                </a>
-            </li>
-        </aura:iteration>
-    </lightning:verticalNavigation>
+    <div>
+        <ul onclick="{!c.onClick}">
+            <aura:iteration items="{!v.menu_elements}" var="item">
+                <li>
+                    <a data-menu-item-id="{!item.month}">
+                        <lightning:formattedText value="{! item.month }" class="table-cell"/>
+                        <aura:if isTrue="{! (item.amount!=null)}">
+                            <lightning:badge label="{! item.amount }" class="table-cell"/>
+                            <lightning:badge label="{! item.income }" class="table-cell"/>
+                        </aura:if>
+                    </a>
+                </li>
+            </aura:iteration>
+        </ul>
+    </div>
 </aura:component>

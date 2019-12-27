@@ -1,25 +1,94 @@
 @isTest
 private class ExpensePageControllerTest {
 
+    // get Data por page
     @isTest
     static void getMonthExpenseTest() {
-        System.debug('========== ExpenseCardTriggerTest.getMonthExpenseTest start test ==========');
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTest start test ==========');
         Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
         List<Date> datesForExpenseCards =
                 TestDataFactory.createDateListForExpenseCards(Date.newInstance(2019, 1, 8), Date.newInstance(2019, 3, 12));
         List<Expense_Card__c> expenseCards = TestDataFactory.createExpenseCards(testContact.Id, datesForExpenseCards);
-        String monthExpenses = ExpensePageController.getMonthExpense(testContact.Id);
+        String monthExpenses = ExpensePageController.getMonthExpense(testContact.Id, 2019);
         List<ExpensePageDTOS.MonthExpenseDTO> monthExpenseDTOS = (List<ExpensePageDTOS.MonthExpenseDTO>)
                 JSON.deserialize(monthExpenses, List<ExpensePageDTOS.MonthExpenseDTO>.class);
         System.assertEquals(24.00, monthExpenseDTOS[0].sumOfExpenses);
-        System.assertEquals(24, monthExpenseDTOS[0].expenseCards.size());
+        System.assertEquals(24, monthExpenseDTOS[0].expenseCardsByDate.size());
         for (ExpensePageDTOS.MonthExpenseDTO meDTO : monthExpenseDTOS) {
             System.debug(meDTO.numberOfMonth);
             System.debug(meDTO.sumOfExpenses);
-            for (ExpensePageDTOS.ExpenseCardDTO expenseCardDTO : meDTO.expenseCards) {
-                System.debug('      ' + expenseCardDTO);
+            for (ExpensePageDTOS.ListExpenseCardsByDateDTO listExpenseCardsByDateDTO : meDTO.expenseCardsByDate) {
+                System.debug(listExpenseCardsByDateDTO.dateOfEC);
+                for (ExpensePageDTOS.ExpenseCardDTO expenseCardDTO : listExpenseCardsByDateDTO.expenseCards) {
+                    System.debug('======' + expenseCardDTO);
+                }
             }
         }
-        System.debug('========== ExpenseCardTriggerTest.getMonthExpenseTest end test ==========');
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTest end test ==========');
+    }
+
+    // insert new expense card
+    @isTest
+    static void insertNewExpenseCardTest() {
+        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest start test ==========');
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        ExpensePageController.insertNewExpenseCard(testContact.Id, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
+        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+        System.assertEquals(1, numOfExpenseCards);
+        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest end test ==========');
+    }
+
+    @isTest
+    static void insertNewExpenseCardTestExceptionOccurred() {
+        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTestExceptionOccurred start test ==========');
+        Test.startTest();
+        try {
+            ExpensePageController.insertNewExpenseCard('0032w000005WtqJAAS', 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
+        } catch (Exception ex) {
+            System.assertEquals('System.AuraHandledException', ex.getTypeName());
+        }
+        Test.stopTest();
+        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+        System.assertEquals(0, numOfExpenseCards);
+        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTestExceptionOccurred end test ==========');
+    }
+
+    // top up balance of monthly expense
+    @isTest
+    static void topUpBalanceTestUpdate() {
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestUpdate start test ==========');
+        Date testDate = Date.newInstance(2019, 3, 1);
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        List<Date> dateForMonthExpense =
+                TestDataFactory.createDateListForMonthlyExpense(testDate, testDate);
+        TestDataFactory.createMonthlyExpenses(testContact.Id, dateForMonthExpense);
+        ExpensePageController.topUpBalance(2019, 3, 12.6, testContact.Id);
+        List<Monthly_Expense__c> me = [SELECT Id, Balance__c FROM Monthly_Expense__c];
+        System.assertEquals(1, me.size());
+        System.assertEquals(2019 + 12.6, me[0].Balance__c);
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestUpdate end test ==========');
+    }
+
+    @isTest
+    static void topUpBalanceTestInsert() {
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestInsert start test ==========');
+        Date testDate = Date.newInstance(2019, 3, 1);
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        ExpensePageController.topUpBalance(2019, 3, 12.6, testContact.Id);
+        List<Monthly_Expense__c> me = [SELECT Id, Balance__c FROM Monthly_Expense__c];
+        System.assertEquals(1, me.size());
+        System.assertEquals(12.60, me[0].Balance__c);
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestInsert end test ==========');
+    }
+
+    @isTest
+    static void topUpBalanceTestExceptionOccurred() {
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred start test ==========');
+        // TODO it
+//        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+//        ExpensePageController.insertNewExpenseCard(testContact.Id, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
+//        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+//        System.assertEquals(1, numOfExpenseCards);
+        System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred end test ==========');
     }
 }

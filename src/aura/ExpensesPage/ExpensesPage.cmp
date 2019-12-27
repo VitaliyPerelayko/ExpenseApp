@@ -8,9 +8,16 @@
     <!--  month for which content is shown -->
     <aura:attribute name="selected_month" type="String" default="January"/>
     <aura:attribute name="menu_elements" type="List"/>
+    <aura:attribute name="month_expense_cards" type="List"/>
     <aura:attribute name="expense_cards" type="Map"/>
     <aura:attribute name="balance" type="Decimal"/>
+    <aura:attribute name="is_save_shown" type="Boolean" default="false"/>
+    <aura:attribute name="is_top_up_shown" type="Boolean" default="false"/>
+    <aura:attribute name="is_data_changed" type="Boolean" default="false"/>
+
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="change" value="{! v.is_data_changed}" action="{! c.init}"/>
+    <aura:handler name="change" value="{! v.selected_month }" action="{! c.monthChanged}"/>
 
     <!--  BODY  -->
     <lightning:card>
@@ -29,7 +36,8 @@
                     <!-- / HEADING AREA -->
                 </div>
                 <!-- ACTION BUTTONS -->
-                <lightning:button iconName="action:update" iconPosition="left" label="Income" onclick="c.addMoney"/>
+                <lightning:button iconName="action:update" iconPosition="left" label="Income"
+                                  onclick="{! c.addMoney }"/>
                 <lightning:button label="New Expense" onclick="{! c.newExpenseCard }"/>
                 <!-- / ACTION BUTTONS -->
             </div>
@@ -39,10 +47,31 @@
         </div>
         <!-- / PAGE HEADER -->
 
-        <!-- Navigation menu -->
-        <c:NavigationMenu menu_elements="{! v.menu_elements }" selected_month="{! v.selected_month }"/>
-        <!--  Content  -->
-        <c:ExpenseCards/>
+
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-4">
+                <span>
+                    <!-- Navigation menu -->
+                    <c:NavigationMenu menu_elements="{! v.menu_elements }" selected_month="{! v.selected_month }"/>
+                </span>
+            </div>
+            <div class="slds-col slds-size_3-of-4">
+                <span>
+                    <!--  Content  -->
+                    <c:ExpenseCards month_expense_cards="{! v.month_expense_cards }"
+                                    is_data_changed="{! v.is_data_changed}"/>
+                </span>
+            </div>
+        </div>
+        <!-- Modal windows -->
+        <aura:if isTrue="{! v.is_save_shown }">
+            <c:NewExpenseCardModal user_id="{# v.userId }" is_shown="{! v.is_save_shown}"
+                                   is_changed="{! v.is_data_changed}"/>
+        </aura:if>
+        <aura:if isTrue="{! v.is_top_up_shown }">
+            <c:TopUpBalance chosenMonth="{# v.selected_month }" year="{# v.year }" keeperId="{# v.userId }"
+                            is_shown="{! v.is_top_up_shown}" is_data_changed="{! v.is_data_changed}"/>
+        </aura:if>
         <!--  Years -->
     </lightning:card>
     <!--  /BODY  -->

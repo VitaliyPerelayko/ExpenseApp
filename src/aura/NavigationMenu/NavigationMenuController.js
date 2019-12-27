@@ -1,7 +1,7 @@
 ({
-    monthChanged: function (component, event, helper){
-        const monthNum = event.target.getAttribute("data-item");
-        console.log(monthNum);
-        component.set("v.number_of_month", monthNum);
+    onClick : function(component, event, helper) {
+        const id = event.target.dataset.menuItemId;
+        console.log(id);
+        component.set("v.selected_month", id);
     }
 })

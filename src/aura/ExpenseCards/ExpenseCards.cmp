@@ -1,8 +1,13 @@
-<aura:component description="ExpenseCards" implements="flexipage:availableForAllPageTypes">
+<aura:component description="ExpenseCards" implements="flexipage:availableForAllPageTypes"
+                controller="ExpensePageController">
+    <!-- Parent attributes -->
     <aura:attribute name="month_expense_cards" type="List"/>
+    <aura:attribute name="is_data_changed" type="Boolean"/>
+    <!-- child attributes -->
     <aura:attribute name="activeSections" type="String"/>
     <aura:attribute name="columns" type="List"/>
-    <aura:attribute name="day_expense_cards" type="Object"/>
+    <aura:attribute name="draftValues" type="Object"/>
+
 
     <aura:handler name="init" value="{! this }" action="{! c.init}"/>
 
@@ -11,12 +16,17 @@
                          onsectiontoggle="{! c.handleSectionToggle }">
         <aura:iteration items="{! v.month_expense_cards }" var="item">
             <lightning:accordionSection name="{! item.dateOfEC }" label="{! item.dateOfEC }">
-                <lightning:datatable
-                        hideCheckboxColumn="true"
-                        showRowNumberColumn="true"
-                        keyField="id"
-                        data="{! v.day_expense_cards }"
-                        columns="{! v.columns }"/>
+                <lightning:datatable aura:id="table"
+                                     hideCheckboxColumn="true"
+                                     showRowNumberColumn="true"
+                                     keyField="cardId"
+                                     data="{! item.expenseCards }"
+                                     columns="{! v.columns }"
+                                     onrowaction="{! c.handleRowAction }"
+                                     draftValues="{! v.draftValues }"
+                                     onsave="{! c.handleSaveEdition }"
+                                     oncancel="{! c.handleCancelAction }"
+                />
             </lightning:accordionSection>
         </aura:iteration>
     </lightning:accordion>

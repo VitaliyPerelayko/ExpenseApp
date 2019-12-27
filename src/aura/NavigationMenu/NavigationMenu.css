@@ -5,14 +5,36 @@
 
 .THIS .table-cell {
     display: table-cell;
-    width: 200px;
+    width: 100px;
     text-align: left;
     vertical-align: middle;
     horiz-align: left;
 }
 
-.THIS .active {
-    border-left-color: mediumblue;
+.THIS ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    border-left-color: #f1f1f1;
+    border-left-width: 2px;
+}
+
+.THIS li a {
+    display: block;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.THIS li a.active {
+    border-left-color: dodgerblue;
     border-left-width: 3px;
-    background-color: lightblue;
+    background-color: snow;
+}
+
+.THIS li a:hover:not(.active) {
+    border-left-color: dodgerblue;
+    border-left-width: 3px;
+    background-color: snow;
 }

@@ -1,7 +1,5 @@
 public class ExpensePageController {
 
-    public static final String SUCCESS = 'SUCCESS';
-
     @AuraEnabled
     public static String getMonthExpense(Id keeperId, Integer year) {
         try {
@@ -26,6 +24,40 @@ public class ExpensePageController {
             Expense_Card__c ec = new Expense_Card__c(Card_Keeper__c = keeperId, Amount__c = amount,
                     CardDate__c = ecDate, Description__c = description);
             insert ec;
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static void updateExpenseCards(String changedExpenseCards) {
+        List<ExpensePageDTOS.ExpenseCardDTO> listOfChangedExpenseCards = (List<ExpensePageDTOS.ExpenseCardDTO>)
+                JSON.deserialize(changedExpenseCards, List<ExpensePageDTOS.ExpenseCardDTO>.class);
+        Map<Id, ExpensePageDTOS.ExpenseCardDTO> mupOfChangedExpenseCards =
+                new Map<Id, ExpensePageDTOS.ExpenseCardDTO>();
+        for (ExpensePageDTOS.ExpenseCardDTO ec : listOfChangedExpenseCards) {
+            mupOfChangedExpenseCards.put(ec.cardId, ec);
+        }
+        try {
+            List<Expense_Card__c> listToUpdate = new List<Expense_Card__c>();
+            Map<Id, Expense_Card__c> ecMap = new Map<Id, Expense_Card__c>([
+                    SELECT Id, Amount__c, Description__c, CardDate__c
+                    FROM Expense_Card__c
+                    WHERE Id IN :mupOfChangedExpenseCards.keySet()
+            ]);
+            for (Id cardId : ecMap.keySet()) {
+                Expense_Card__c ec = ecMap.get(cardId);
+                ExpensePageDTOS.ExpenseCardDTO ecDTO = mupOfChangedExpenseCards.get(cardId);
+                if (ecDTO.description != null) {
+                    ec.Description__c = ecDTO.description;
+                }
+                if (ecDTO.amount != null) {
+                    ec.Amount__c = ecDTO.amount;
+                }
+                listToUpdate.add(ec);
+            }
+            System.debug('==========' + listToUpdate + '==============');
+            update listToUpdate;
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
         }

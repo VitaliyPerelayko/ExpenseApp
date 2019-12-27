@@ -29,6 +29,7 @@
                     });
                     component.set("v.menu_elements", menuElements);
                     component.set("v.expense_cards", expenseCards);
+                    component.set("v.month_expense_cards", expenseCards.get("January"));
                     component.set("v.balance", balance);
                 }
             }

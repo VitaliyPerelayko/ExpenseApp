@@ -1,0 +1,36 @@
+<aura:component description="TopUpBalance" controller="ExpensePageController">
+
+    <!-- Parent attributes -->
+    <aura:attribute name="year" type="Integer"/>
+    <aura:attribute name="chosenMonth" type="String"/>
+    <aura:attribute name="keeperId" type="Id"/>
+    <aura:attribute name="is_shown" type="Boolean"/>
+    <aura:attribute name="is_data_changed" type="Boolean"/>
+    <!-- this attributes -->
+    <aura:attribute name="addMoney" type="Decimal"/>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+             aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close" variant="bare" onclick="{! c.hideMe }"
+                                      alternativeText="Close" class="slds-modal__close"/>
+                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Top Up Balance</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <h3>
+                    Top up balance for {! v.chosenMonth}
+                </h3>
+                <lightning:input label="Amount of money to add" required="true" name="amount"
+                                 placeholder="Type number..." type="number" value="{! v.addMoney}"
+                                 min="0" formatter="currency" step="0.01"/>
+            </div>
+            <footer class="slds-modal__footer">
+                <lightning:button label="Cancel" title="Hide new expense card window" onclick="{! c.hideMe}"/>
+                <lightning:button label="Submit" variant="brand" title="Top up balance"
+                                  onclick="{! c.submitClicked }"/>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>
