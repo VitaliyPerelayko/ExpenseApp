@@ -38,15 +38,4 @@ public class AdminPageController {
         ]);
         return JSON.serialize(AdminPageDTOS.mapOfficeDetailDTO(office, year, monthlyExpenses, keepersLastNames));
     }
-
-    @AuraEnabled
-    public static String deleteExpenseCard(Id ecId) {
-        try {
-            Expense_Card__c ec = new Expense_Card__c(Id = ecId);
-            delete ec;
-            return 'SUCCESS';
-        } catch (Exception ex) {
-            return ex.getMessage();
-        }
-    }
 }

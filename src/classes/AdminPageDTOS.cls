@@ -3,8 +3,6 @@ public class AdminPageDTOS {
     public class ExpensesForYearDTO {
         public Integer yearN { get; set; }
         public List<OfficeDTO> offices { get; set; }
-        // map number of month => sum by month
-        public Map<Integer, Decimal> sumByMonth { get; set; }
         public Decimal total { get; set; }
     }
 
@@ -14,6 +12,8 @@ public class AdminPageDTOS {
         public Decimal balanceForYear { get; set; }
         public Decimal monthlyAverage { get; set; }
         public Decimal total { get; set; }
+        // map number of month => sum by month
+        public Map<Integer, Decimal> sumByMonth { get; set; }
     }
 
     public class OfficeDetailDTO {
@@ -83,7 +83,6 @@ public class AdminPageDTOS {
     private static ExpensesForYearDTO createExpenseForYear(Integer yearN, List<Monthly_Expense__c> monthlyExpenses,
             Map<Id, Contact> contactsOfficeMap) {
         ExpensesForYearDTO expensesForYearDTO = new ExpensesForYearDTO();
-        Map<Integer, Decimal> sumByMonth = new Map<Integer, Decimal>();
         Decimal total = 0;
         expensesForYearDTO.yearN = yearN;
         // sort Monthly expenses by office
@@ -99,19 +98,9 @@ public class AdminPageDTOS {
             } else {
                 meList.add(monthlyExpense);
             }
-            // set Sum
-            Integer month = monthlyExpense.MonthDate__c.month();
-            Decimal sum = sumByMonth.get(month);
-            if (sum == null) {
-                sumByMonth.put(month, monthlyExpense.SpentAmount__c);
-            } else {
-                sum = sum + monthlyExpense.SpentAmount__c;
-                sumByMonth.put(month, sum);
-            }
             total = total + monthlyExpense.SpentAmount__c;
         }
         expensesForYearDTO.offices = generateOfficesDTOs(officeMonthlyExpenses);
-        expensesForYearDTO.sumByMonth = sumByMonth;
         expensesForYearDTO.total = total;
         //setDataToExpensesForYearDTO(expensesForYearDTO, monthlyExpenses, contactsOfficeMap);
         return expensesForYearDTO;
@@ -121,13 +110,24 @@ public class AdminPageDTOS {
         List<OfficeDTO> officeDTOS = new List<AdminPageDTOS.OfficeDTO>();
         for (String office : officeMonthlyExpenses.keySet()) {
             OfficeDTO officeDTO = new OfficeDTO();
+            Map<Integer, Decimal> sumByMonth = new Map<Integer, Decimal>();
             officeDTO.office = office;
             Decimal balanceForYear = 0;
             Decimal total = 0;
             for (Monthly_Expense__c me : officeMonthlyExpenses.get(office)) {
                 balanceForYear = balanceForYear + me.Reminder__c;
                 total = total + me.SpentAmount__c;
+                // set Sum
+                Integer month = me.MonthDate__c.month();
+                Decimal sum = sumByMonth.get(month);
+                if (sum == null) {
+                    sumByMonth.put(month, me.SpentAmount__c);
+                } else {
+                    sum = sum + me.SpentAmount__c;
+                    sumByMonth.put(month, sum);
+                }
             }
+            officeDTO.sumByMonth = sumByMonth;
             officeDTO.total = total;
             officeDTO.balanceForYear = balanceForYear;
             officeDTO.monthlyAverage = total / 12;

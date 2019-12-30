@@ -1,0 +1,13 @@
+.THIS .expense-office-style {
+    color: darkgrey;
+    font-size: 25px;
+}
+.THIS .balance-style {
+    font-size: 25px;
+    margin-left: 200px;
+}
+.THIS .balance-number-style {
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 10px;
+}

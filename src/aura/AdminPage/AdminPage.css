@@ -1,0 +1,40 @@
+/*.THIS .slds-dl--inline__detail {*/
+/*    margin-left: 0px;*/
+/*}*/
+
+.THIS .month-style {
+    font-size: 20px;
+    color: #272b71;
+    background-color: #d2d2d2;
+}
+
+.THIS .balance-style {
+    font-size: 25px;
+    color: #d7142b;
+    background-color: #afc3dc;
+}
+
+.THIS .m-average-style {
+    font-size: 15px;
+    color: #d7142b;
+    background-color: #ffedd5;
+}
+
+.THIS .first-row-style {
+    background-color: #f4fff9;
+    height: 50px;
+}
+
+.THIS .total-style {
+    font-weight: bold;
+    background-color: #a7a7a7;
+}
+
+.THIS tr:nth-child(even) {
+    background-color: #f4f9fd;
+}
+
+.THIS tr {
+    height: 25px;
+    background-color: #ffffff;
+}
