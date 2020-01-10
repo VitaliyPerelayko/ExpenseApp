@@ -13,6 +13,8 @@
 
     <aura:handler name="init" value="{! this }" action="{! c.init}"/>
 
+    <lightning:navigation aura:id="adminNavService"/>
+
     <div class="slds-grid slds-wrap">
         <!-- 1st column MONTHS -->
         <div class="slds-col slds-size_1-of-6">
@@ -51,7 +53,7 @@
             </table>
         </div>
         <!-- 2nd column MONTH DETAILS -->
-        <div class="slds-col slds-size_4-of-6">
+        <div class="slds-col slds-size_4-of-6" style="overflow-x: auto;">
             <aura:iteration items="{! v.expense_for_year_by_office }" var="office">
                 <div class="slds-dl--inline__detail">
                     <table cellspacing="0" cellpadding="0">

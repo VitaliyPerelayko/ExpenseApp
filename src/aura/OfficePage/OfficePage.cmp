@@ -9,7 +9,8 @@
     <aura:attribute name="selected_month" type="String" default="January"/>
     <aura:attribute name="menu_elements" type="List"/>
     <aura:attribute name="month_expense_cards" type="List"/>
-    <aura:attribute name="expense_cards" type="Map"/>
+    <aura:attribute name="expense_cards_by_keeper" type="Map"/>
+    <aura:attribute name="expense_cards_by_month" type="Map"/>
     <aura:attribute name="balance" type="Decimal"/>
 
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
@@ -50,7 +51,7 @@
                 <span>
                     <!--  Content  -->
                     <c:ExpenseCards month_expense_cards="{! v.month_expense_cards }"
-                                    is_data_changed="{! v.is_data_changed}"/>
+                                    is_data_changed="{! v.is_data_changed }"/>
                 </span>
             </div>
         </div>

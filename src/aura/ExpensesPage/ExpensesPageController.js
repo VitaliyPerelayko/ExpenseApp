@@ -1,5 +1,6 @@
 ({
     init: function (component, event, helper) {
+        console.log("============ init start");
         const id = component.get("v.pageReference").state.c__id;
         const office = component.get("v.pageReference").state.c__office;
         const year = new Date().getFullYear();
@@ -9,7 +10,15 @@
         component.set("v.office", office);
         component.set("v.years", years);
         component.set("v.is_data_changed", false);
+        console.log("============ before helper");
         helper.getContentForPage(component, id, year);
+    },
+
+    yearChanged: function (component, event, helper) {
+        const year = event.getSource().get("v.label");
+        component.set("v.year", year);
+        console.log(year);
+        helper.getContentForPage(component, component.get("v.userId"), year);
     },
 
     monthChanged: function (component, event, helper) {

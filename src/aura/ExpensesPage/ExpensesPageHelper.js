@@ -10,6 +10,9 @@
         });
         action.setCallback(this, function (response) {
                 if (this.validateResponse(response)) {
+                    console.log("============");
+                    let totalAmount = 0;
+                    let totalIncome = 0;
                     let balance = 0;
                     let menuElements = [];
                     monthNames.forEach(function (month) {
@@ -18,6 +21,7 @@
                     let expenseCards = new Map();
                     const monthExpensesDTOs = JSON.parse(response.getReturnValue());
                     monthExpensesDTOs.forEach(function (monthExpenseDTO) {
+                        console.log("============");
                         // set menu elements
                         const numOfMonth = monthExpenseDTO.numberOfMonth - 1;
                         menuElements[numOfMonth].amount = monthExpenseDTO.sumOfExpenses;
@@ -26,8 +30,17 @@
                         expenseCards.set(menuElements[numOfMonth].month, monthExpenseDTO.expenseCardsByDate);
                         // set balance
                         balance = balance - monthExpenseDTO.sumOfExpenses + monthExpenseDTO.sumBalance;
+                        // set total
+                        console.log("============");
+                        totalIncome += menuElements[numOfMonth].income;
+                        console.log(totalIncome);
+                        totalAmount += menuElements[numOfMonth].amount;
                     });
+                    // attributes for navigation component
                     component.set("v.menu_elements", menuElements);
+                    component.set("v.total_amount", totalAmount);
+                    component.set("v.total_income", totalIncome);
+                    // attributes for content
                     component.set("v.expense_cards", expenseCards);
                     component.set("v.month_expense_cards", expenseCards.get("January"));
                     component.set("v.balance", balance);

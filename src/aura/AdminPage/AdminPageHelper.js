@@ -1,6 +1,6 @@
 ({
-    setInitData: function (component, response, year) {
-        console.log(response.getReturnValue());
+    setInitData: function (component, response) {
+        let year = 0;
         let yearOptions = [];
         // year => expense details
         let expensesByYear = new Map();
@@ -15,6 +15,7 @@
             const expForYearDTO = expensesForYearDTOList[k];
             let sumExpensesForYearByMonth = [];
             const yearN = expForYearDTO.yearN;
+            year = yearN;
             const yearOption = {'label': "Regional Expense " + yearN, 'value': yearN};
             yearOptions.push(yearOption);
             // iteration though offices
@@ -50,6 +51,7 @@
             sumExpenseBYMonthMap.set(yearN, sumExpensesForYearByMonth);
             expensesByYear.set(yearN, expenseForYear);
         }
+        component.set("v.year", year);
         component.set("v.year_options", yearOptions);
         component.set("v.expenses_by_year", expensesByYear);
         component.set("v.expense_for_year_by_office", expensesByYear.get(year).officesDTO);

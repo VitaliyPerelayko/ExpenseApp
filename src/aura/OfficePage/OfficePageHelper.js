@@ -15,9 +15,14 @@
                     monthNames.forEach(function (month) {
                         menuElements.push({month: month, amount: null, income: null})
                     });
-                    let expenseCards = new Map();
-                    const monthExpensesDTOs = JSON.parse(response.getReturnValue());
-                    monthExpensesDTOs.forEach(function (monthExpenseDTO) {
+                    let expenseCardsByKeeper = new Map();
+                    const officeDetailDTO = JSON.parse(response.getReturnValue());
+                    officeDetailDTO.keeperList.forEach(function (keeperDTO) {
+                        expenseCardsByKeeper.set(keeperDTO.keeperId,
+                            {lastName: keeperDTO.lastName, monthExpenses: keeperDTO.monthExpenses});
+                        keeperDTO.monthExpenses.forEach(function (monthExpenseDTO) {
+
+                        });
                         // set menu elements
                         const numOfMonth = monthExpenseDTO.numberOfMonth - 1;
                         menuElements[numOfMonth].amount = monthExpenseDTO.sumOfExpenses;
