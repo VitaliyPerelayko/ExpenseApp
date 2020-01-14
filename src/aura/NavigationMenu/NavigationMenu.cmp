@@ -1,54 +1,53 @@
-<aura:component description="NavigationMenu">
-    <aura:attribute name="selected_month" type="Integer"/>
+<aura:component description="NavigationMenu" implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="selected_month" type="String"/>
     <aura:attribute name="menu_elements" type="List"/>
     <aura:attribute name="total_amount" type="Decimal"/>
     <aura:attribute name="total_income" type="Decimal"/>
 
-    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
-
-    <div>
-        <ul onclick="{!c.onClick}">
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_2-of-4">
-                    <lightning:formattedText value="MONTHS"/>
-                </div>
-                <div class="slds-col slds-size_1-of-4">
-                    <lightning:formattedText value="Amount"/>
-                </div>
-                <div class="slds-col slds-size_1-of-4">
-                    <lightning:formattedText value="Income"/>
-                </div>
-            </div>
-            <aura:iteration items="{!v.menu_elements}" var="item">
-                <li>
-                    <a data-menu-item-id="{!item.month}">
-                        <div class="slds-grid slds-gutters">
-                            <div class="slds-col slds-size_2-of-4">
-                                <lightning:formattedText value="{! item.month }"/>
-                            </div>
-                            <aura:if isTrue="{! (item.amount!=null) }">
-                                <div class="slds-col slds-size_1-of-4">
-                                    <lightning:badge label="{! item.amount }"/>
-                                </div>
-                                <div class="slds-col slds-size_1-of-4">
-                                    <lightning:badge label="{! item.income }"/>
-                                </div>
-                            </aura:if>
-                        </div>
-                    </a>
-                </li>
-            </aura:iteration>
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_2-of-4">
-                    <lightning:formattedText value="Total"/>
-                </div>
-                <div class="slds-col slds-size_1-of-4">
-                    {! v.total_amount }
-                </div>
-                <div class="slds-col slds-size_1-of-4">
-                    {! v.total_income }
-                </div>
-            </div>
-        </ul>
-    </div>
+    <table style="margin-left: 5%;border-right: medium solid #eeeeee;">
+        <tr>
+            <th style="width:46%; color: #a7a7a7; padding-left: 5%">
+                MONTHS
+            </th>
+            <th style="width:32%; color: #a7a7a7">
+                Amount
+            </th>
+            <th style="width:32%; color: #a7a7a7">
+                Income
+            </th>
+        </tr>
+        <aura:iteration items="{!v.menu_elements}" var="item">
+            <tr class="{! item.month == 'January'?'active':'' }" data-menu-item-id="{!item.month}"
+                onclick="{! c.onClick }" style="height:40px" id="links">
+                <td style="padding-left: 10%">
+                    {! item.month }
+                </td>
+                <aura:if isTrue="{! (item.amount!=null) }">
+                    <td>
+                        <lightning:badge label="{! item.amount }"/>
+                    </td>
+                    <td>
+                        <lightning:badge label="{! item.income }"/>
+                    </td>
+                    <aura:set attribute="else">
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </aura:set>
+                </aura:if>
+            </tr>
+        </aura:iteration>
+        <tr style="background-color: #d2d2d2; font-weight: bold">
+            <td style="font-weight: bold; padding-left: 12%">
+                Total:
+            </td>
+            <td>
+                <lightning:formattedNumber value="{! v.total_amount }" maximumFractionDigits="1"/>
+            </td>
+            <td class="column">
+                <lightning:formattedNumber value="{! v.total_income }" maximumFractionDigits="1"/>
+            </td>
+        </tr>
+    </table>
 </aura:component>

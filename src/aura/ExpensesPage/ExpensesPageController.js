@@ -1,6 +1,9 @@
 ({
     init: function (component, event, helper) {
-        console.log("============ init start");
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        component.set("v.months", monthNames);
         const id = component.get("v.pageReference").state.c__id;
         const office = component.get("v.pageReference").state.c__office;
         const year = new Date().getFullYear();
@@ -9,16 +12,22 @@
         component.set("v.userId", id);
         component.set("v.office", office);
         component.set("v.years", years);
-        component.set("v.is_data_changed", false);
-        console.log("============ before helper");
-        helper.getContentForPage(component, id, year);
+        helper.getContentForPage(component, id, year, monthNames);
     },
 
     yearChanged: function (component, event, helper) {
-        const year = event.getSource().get("v.label");
-        component.set("v.year", year);
-        console.log(year);
-        helper.getContentForPage(component, component.get("v.userId"), year);
+        try {
+            const year = event.getSource().get("v.label");
+            component.set("v.year", year);
+            console.log(year);
+            const id = component.get("v.userId");
+            const monthNames = component.get("v.months");
+            console.log("=========menuElements=======");
+            console.log(monthNames);
+            helper.getContentForPage(component, id, year, monthNames);
+        } catch (e) {
+            console.error(e);
+        }
     },
 
     monthChanged: function (component, event, helper) {
@@ -33,5 +42,12 @@
 
     addMoney: function (component, event, helper) {
         component.set("v.is_top_up_shown", true);
-    }
+    },
+
+    rerender: function (component, event, helper) {
+        const id = component.get("v.userId");
+        const year = component.get("v.year");
+        const monthNames = component.get("v.months");
+        helper.getContentForPage(component, id, year, monthNames);
+    },
 })

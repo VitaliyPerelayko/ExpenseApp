@@ -18,6 +18,7 @@
         });
         action.setCallback(this, function (response) {
             if (helper.validateResponse(response)){
+                console.log("Balance in " + chosenMonth + "of " + year + " was replenished by " + addMoney);
                 component.set("v.is_shown", false);
                 component.set("v.is_data_changed", true);
             }

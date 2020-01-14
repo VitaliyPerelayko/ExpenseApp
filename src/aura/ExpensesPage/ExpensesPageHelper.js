@@ -1,27 +1,22 @@
 ({
-    getContentForPage: function (component, userId, year) {
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
+    getContentForPage: function (component, userId, year, monthNames) {
         const action = component.get("c.getMonthExpense");
+        let menuElements = [];
+        monthNames.forEach(function (month) {
+            menuElements.push({month: month, amount: null, income: null})
+        });
         action.setParams({
             keeperId: userId,
             year: year
         });
         action.setCallback(this, function (response) {
                 if (this.validateResponse(response)) {
-                    console.log("============");
                     let totalAmount = 0;
                     let totalIncome = 0;
                     let balance = 0;
-                    let menuElements = [];
-                    monthNames.forEach(function (month) {
-                        menuElements.push({month: month, amount: null, income: null})
-                    });
                     let expenseCards = new Map();
                     const monthExpensesDTOs = JSON.parse(response.getReturnValue());
                     monthExpensesDTOs.forEach(function (monthExpenseDTO) {
-                        console.log("============");
                         // set menu elements
                         const numOfMonth = monthExpenseDTO.numberOfMonth - 1;
                         menuElements[numOfMonth].amount = monthExpenseDTO.sumOfExpenses;
@@ -31,11 +26,10 @@
                         // set balance
                         balance = balance - monthExpenseDTO.sumOfExpenses + monthExpenseDTO.sumBalance;
                         // set total
-                        console.log("============");
                         totalIncome += menuElements[numOfMonth].income;
-                        console.log(totalIncome);
                         totalAmount += menuElements[numOfMonth].amount;
                     });
+                    component.set("v.is_data_changed", false);
                     // attributes for navigation component
                     component.set("v.menu_elements", menuElements);
                     component.set("v.total_amount", totalAmount);

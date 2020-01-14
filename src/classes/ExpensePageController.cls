@@ -82,6 +82,7 @@ public class ExpensePageController {
                 monthlyExpense.Balance__c = monthlyExpense.Balance__c + addMoney;
             }
             upsert monthlyExpense;
+            System.debug('Balance in ' + month + '.' + year + ' was replenished by ' + addMoney);
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
         }

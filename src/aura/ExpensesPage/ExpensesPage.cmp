@@ -1,8 +1,11 @@
 <aura:component description="ExpensesPage"
                 controller="ExpensePageController"
                 implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable">
+    <!--  user info -->
     <aura:attribute name="userId" type="Id"/>
     <aura:attribute name="office" type="String"/>
+
+    <aura:attribute name="months" type="List"/>
     <aura:attribute name="year" type="Integer"/>
     <aura:attribute name="years" type="List"/>
     <!--  month for which content is shown -->
@@ -11,16 +14,18 @@
     <aura:attribute name="menu_elements" type="List"/>
     <aura:attribute name="total_amount" type="Decimal"/>
     <aura:attribute name="total_income" type="Decimal"/>
-    <!--  attributes for navigation menu end  -->
+    <!--  attributes for expense cards  -->
     <aura:attribute name="month_expense_cards" type="List"/>
     <aura:attribute name="expense_cards" type="Map"/>
     <aura:attribute name="balance" type="Decimal"/>
+    <!--  modal windows expense cards -->
     <aura:attribute name="is_save_shown" type="Boolean" default="false"/>
     <aura:attribute name="is_top_up_shown" type="Boolean" default="false"/>
+    <!-- flag to indicate if we should rerender page -->
     <aura:attribute name="is_data_changed" type="Boolean" default="false"/>
 
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
-    <aura:handler name="change" value="{! v.is_data_changed}" action="{! c.init }"/>
+    <aura:handler name="change" value="{! v.is_data_changed}" action="{! c.rerender }"/>
     <aura:handler name="change" value="{! v.selected_month }" action="{! c.monthChanged}"/>
 
     <!--  BODY  -->
@@ -50,16 +55,15 @@
             <!-- / PAGE HEADER DETAIL ROW -->
         </div>
         <!-- / PAGE HEADER -->
-
-
+        <br/>
         <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_1-of-4">
                 <span>
                     <!-- Navigation menu -->
-                    <c:NavigationMenu menu_elements="{# v.menu_elements }" selected_month="{! v.selected_month }"
-                                      total_income="{# v.total_income }" total_amount="{# v.total_amount }"/>
-                    <p>Years</p>
-                    <lightning:buttonGroup>
+                    <c:NavigationMenu selected_month="{! v.selected_month }" menu_elements="{! v.menu_elements }"
+                                      total_amount="{! v.total_amount }" total_income="{! v.total_income }"/>
+                    <p style="padding-left: 5%">Years</p>
+                    <lightning:buttonGroup class="padding">
                         <aura:iteration items="{! v.years}" var="item">
                             <lightning:button label="{! item }" onclick="{! c.yearChanged }"/>
                         </aura:iteration>
