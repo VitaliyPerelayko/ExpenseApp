@@ -1,5 +1,5 @@
 ({
-    getContentForPage: function (component, userId, year, monthNames) {
+    getContentForPageForMonth: function (component, userId, year, monthNames, month) {
         const action = component.get("c.getMonthExpense");
         let menuElements = [];
         monthNames.forEach(function (month) {
@@ -36,7 +36,7 @@
                     component.set("v.total_income", totalIncome);
                     // attributes for content
                     component.set("v.expense_cards", expenseCards);
-                    component.set("v.month_expense_cards", expenseCards.get("January"));
+                    component.set("v.month_expense_cards", expenseCards.get(month));
                     component.set("v.balance", balance);
                 }
             }

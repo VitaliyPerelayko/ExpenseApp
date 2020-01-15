@@ -17,7 +17,7 @@
             </th>
         </tr>
         <aura:iteration items="{!v.menu_elements}" var="item">
-            <tr class="{! item.month == 'January'?'active':'' }" data-menu-item-id="{!item.month}"
+            <tr class="{! item.month == v.selected_month?'active':'' }" data-menu-item-id="{!item.month}"
                 onclick="{! c.onClick }" style="height:40px" id="links">
                 <td style="padding-left: 10%">
                     {! item.month }

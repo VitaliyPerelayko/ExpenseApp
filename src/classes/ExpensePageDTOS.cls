@@ -10,6 +10,7 @@ public class ExpensePageDTOS {
     public class ListExpenseCardsByDateDTO {
         public Date dateOfEC { get; set; }
         public List<ExpenseCardDTO> expenseCards { get; set; }
+        public Decimal totalAmount;
     }
 
     public class ExpenseCardDTO {
@@ -37,6 +38,7 @@ public class ExpensePageDTOS {
             ListExpenseCardsByDateDTO listExpenseCardsByDateDTO = new ListExpenseCardsByDateDTO();
             listExpenseCardsByDateDTO.dateOfEC = d;
             listExpenseCardsByDateDTO.expenseCards = expenseCardsByDatesMap.get(d);
+            listExpenseCardsByDateDTO.totalAmount = getTotalForDate(listExpenseCardsByDateDTO.expenseCards);
             listExpenseCardsByDateDTOS.add(listExpenseCardsByDateDTO);
         }
         return listExpenseCardsByDateDTOS;
@@ -75,5 +77,13 @@ public class ExpensePageDTOS {
             monthExpenseDTOS.add(ExpensePageDTOS.mapMonthExpense(me, expenseCardsByDate));
         }
         return monthExpenseDTOS;
+    }
+
+    private static Decimal getTotalForDate(List<ExpenseCardDTO> listExpenseCardDTOS){
+        Decimal total = 0.0;
+        for (ExpenseCardDTO ecDTO: listExpenseCardDTOS){
+            total += ecDTO.amount;
+        }
+        return total;
     }
 }

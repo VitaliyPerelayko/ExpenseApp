@@ -14,14 +14,19 @@
     },
 
     yearChanged: function (component, event, helper) {
-        const year = event.getParam("value");
-        console.log(year);
-        component.set("v.year", year);
-        const expensesByYear = component.get("v.expenses_by_year");
-        component.set("v.expense_for_year_by_office", expensesByYear.get(year).officesDTO);
-        component.set("v.total_for_year", expensesByYear.get(year).total);
-        const sumExpenseBYMonthMap = component.get("v.sum_expenses_by_month_map");
-        component.set("v.sum_expenses_for_year_by_month", sumExpenseBYMonthMap.get(year));
+        try {
+            const year = event.getParam("value");
+            console.log(year);
+            component.set("v.year", year);
+            const expensesByYear = component.get("v.expenses_by_year");
+            console.log(expensesByYear.get(2019));
+            component.set("v.expense_for_year_by_office", expensesByYear.get(year).officesDTO);
+            component.set("v.total_for_year", expensesByYear.get(year).total);
+            const sumExpenseBYMonthMap = component.get("v.sum_expenses_by_month_map");
+            component.set("v.sum_expenses_for_year_by_month", sumExpenseBYMonthMap.get(year));
+        } catch (e) {
+            console.error(e);
+        }
     },
 
     navigateToOffice: function (component, event, helper) {

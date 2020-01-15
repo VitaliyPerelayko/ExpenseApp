@@ -27,6 +27,11 @@
                                      onsave="{! c.handleSaveEdition }"
                                      oncancel="{! c.handleCancelAction }"
                 />
+                <p style="margin-left: 5%; font-weight: bold; display: inline">Total:</p>
+                <p style="margin-left: 29%; font-weight: bold; display: inline">
+                    <lightning:formattedNumber value="{! item.totalAmount }" currencyCode="USD"
+                                               maximumFractionDigits="2" style="currency"/>
+                </p>
             </lightning:accordionSection>
         </aura:iteration>
     </lightning:accordion>

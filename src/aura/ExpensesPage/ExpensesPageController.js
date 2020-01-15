@@ -12,7 +12,7 @@
         component.set("v.userId", id);
         component.set("v.office", office);
         component.set("v.years", years);
-        helper.getContentForPage(component, id, year, monthNames);
+        helper.getContentForPageForMonth(component, id, year, monthNames, "January");
     },
 
     yearChanged: function (component, event, helper) {
@@ -22,9 +22,8 @@
             console.log(year);
             const id = component.get("v.userId");
             const monthNames = component.get("v.months");
-            console.log("=========menuElements=======");
-            console.log(monthNames);
-            helper.getContentForPage(component, id, year, monthNames);
+            const selectedMonth = component.get("v.selected_month");
+            helper.getContentForPageForMonth(component, id, year, monthNames, selectedMonth);
         } catch (e) {
             console.error(e);
         }
@@ -48,6 +47,7 @@
         const id = component.get("v.userId");
         const year = component.get("v.year");
         const monthNames = component.get("v.months");
-        helper.getContentForPage(component, id, year, monthNames);
+        const selectedMonth = component.get("v.selected_month")
+        helper.getContentForPageForMonth(component, id, year, monthNames, selectedMonth);
     },
 })

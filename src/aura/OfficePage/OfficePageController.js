@@ -7,7 +7,7 @@
         // component.set("v.userId", id);
         component.set("v.office", office);
         component.set("v.years", years);
-        helper.getContentForPage(component, office, year);
+        helper.getContentForPageForMonth(component, office, year);
     },
 
     monthChanged: function (component, event, helper) {

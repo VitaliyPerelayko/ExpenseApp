@@ -3,8 +3,8 @@
         const action = component.get("c.deleteExpenseCard");
         action.setParams({ecId: cardId});
         action.setCallback(this, function (response) {
-            if (this.validateResponse(response)){
-                component.set("v.data_changed", true);
+            if (this.validateResponse(response)) {
+                component.set("v.is_data_changed", true);
             }
         });
         $A.enqueueAction(action);
@@ -25,11 +25,11 @@
         console.log('===Expense card dataTable changed records===');
         console.log(changedECDTOs);
         let action = component.get("c.updateExpenseCards");
-        action.setParams({ changedExpenseCards: JSON.stringify(changedECDTOs)});
+        action.setParams({changedExpenseCards: JSON.stringify(changedECDTOs)});
         console.log(JSON.stringify(changedECDTOs));
         action.setCallback(this, function (response) {
-            if (this.validateResponse(response)){
-                component.set("v.data_changed", true);
+            if (this.validateResponse(response)) {
+                component.set("v.is_data_changed", true);
             }
         });
         $A.enqueueAction(action);
