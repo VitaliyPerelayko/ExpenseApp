@@ -14,20 +14,4 @@
         ];
         component.set("v.columns", columns);
     },
-
-    handleSaveEdition: function (component, event, helper) {
-        const draftValues = event.getParam('draftValues');
-        helper.saveChanges(component, draftValues);
-    },
-
-    handleCancelAction: function (component, event, helper) {
-    },
-
-    handleRowAction: function (component, event, helper) {
-        const action = event.getParam('action');
-        const row = event.getParam('row');
-        if (action.name === 'delete') {
-            helper.deleteExpenseCard(component, row.cardId);
-        }
-    },
 })

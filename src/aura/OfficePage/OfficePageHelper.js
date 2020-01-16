@@ -1,41 +1,70 @@
 ({
-    getContentForPageForMonth: function (component, office, year) {
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        const action = component.get("c.getDataForOfficePage");
+    getContentForPageForMonth: function (component, office, year, monthNames, month) {
+        const action = component.get("c.getInfoForOfficePage");
+        let startKeeperContent = {};
+        let listKeepers = [];
+        let expenseCardsByKeeper = new Map();
         action.setParams({
             office: office,
             year: year
         });
         action.setCallback(this, function (response) {
                 if (this.validateResponse(response)) {
-                    let balance = 0;
-                    let menuElements = [];
-                    monthNames.forEach(function (month) {
-                        menuElements.push({month: month, amount: null, income: null})
-                    });
-                    let expenseCardsByKeeper = new Map();
-                    const officeDetailDTO = JSON.parse(response.getReturnValue());
-                    officeDetailDTO.keeperList.forEach(function (keeperDTO) {
-                        expenseCardsByKeeper.set(keeperDTO.keeperId,
-                            {lastName: keeperDTO.lastName, monthExpenses: keeperDTO.monthExpenses});
-                        keeperDTO.monthExpenses.forEach(function (monthExpenseDTO) {
-
+                    const OfficeDetailDTO = JSON.parse(response.getReturnValue());
+                    const listKeeperDTOS = OfficeDetailDTO.keeperList;
+                    for (let k = 0; k < listKeeperDTOS.length; k++) {
+                        // menu items frame
+                        let menuElements = [];
+                        monthNames.forEach(function (month) {
+                            menuElements.push({month: month, amount: null, income: null})
                         });
-                        // set menu elements
-                        const numOfMonth = monthExpenseDTO.numberOfMonth - 1;
-                        menuElements[numOfMonth].amount = monthExpenseDTO.sumOfExpenses;
-                        menuElements[numOfMonth].income = monthExpenseDTO.sumBalance;
-                        // set expense cards
-                        expenseCards.set(menuElements[numOfMonth].month, monthExpenseDTO.expenseCardsByDate);
-                        // set balance
-                        balance = balance - monthExpenseDTO.sumOfExpenses + monthExpenseDTO.sumBalance;
-                    });
-                    component.set("v.menu_elements", menuElements);
-                    component.set("v.expense_cards", expenseCards);
-                    component.set("v.month_expense_cards", expenseCards.get("January"));
-                    component.set("v.balance", balance);
+                        let totalAmount = 0;
+                        let totalIncome = 0;
+                        let balance = 0;
+                        let expenseCards = new Map();
+                        // set list of keepers
+                        const keeperDTO = listKeeperDTOS[k];
+                        listKeepers.push({label: keeperDTO.lastName, value: keeperDTO.keeperId});
+                        // set content start
+                        const monthExpensesDTOs = keeperDTO.monthExpenses;
+                        monthExpensesDTOs.forEach(function (monthExpenseDTO) {
+                            // set menu elements
+                            const numOfMonth = monthExpenseDTO.numberOfMonth - 1;
+                            menuElements[numOfMonth].amount = monthExpenseDTO.sumOfExpenses;
+                            menuElements[numOfMonth].income = monthExpenseDTO.sumBalance;
+                            // set expense cards
+                            expenseCards.set(menuElements[numOfMonth].month, monthExpenseDTO.expenseCardsByDate);
+                            // set balance
+                            balance = balance - monthExpenseDTO.sumOfExpenses + monthExpenseDTO.sumBalance;
+                            // set total
+                            totalIncome += menuElements[numOfMonth].income;
+                            totalAmount += menuElements[numOfMonth].amount;
+                        });
+                        expenseCardsByKeeper.set(keeperDTO.keeperId,
+                            {
+                                totalIncome: totalIncome,
+                                totalAmount: totalAmount,
+                                balance: balance,
+                                menuElements: menuElements,
+                                expenseCards: expenseCards
+                            });
+                        startKeeperContent = expenseCardsByKeeper.get(listKeepers[0].value);
+                        // set content end
+                    }
+                    // set expense_cards_by_keeper
+                    component.set("v.expense_cards_by_keeper", expenseCardsByKeeper);
+                    // set user info
+                    component.set("v.keepers", listKeepers);
+                    component.set("v.userName", listKeepers[0].label);
+                    component.set("v.userId", listKeepers[0].value);
+                    // attributes for navigation component
+                    component.set("v.menu_elements", startKeeperContent.menuElements);
+                    component.set("v.total_amount", startKeeperContent.totalAmount);
+                    component.set("v.total_income", startKeeperContent.totalIncome);
+                    // attributes for content
+                    component.set("v.expense_cards_by_month", startKeeperContent.expenseCards);
+                    component.set("v.month_expense_cards", startKeeperContent.expenseCards.get(month));
+                    component.set("v.balance", startKeeperContent.balance);
                 }
             }
         );

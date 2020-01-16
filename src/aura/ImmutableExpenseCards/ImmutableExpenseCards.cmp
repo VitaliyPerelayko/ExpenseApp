@@ -1,12 +1,8 @@
-<aura:component description="ExpenseCards" implements="flexipage:availableForAllPageTypes"
-                controller="ExpensePageController">
+<aura:component description="ImmutableExpenseCards" implements="flexipage:availableForAllPageTypes">
     <!-- Parent attributes -->
     <aura:attribute name="month_expense_cards" type="List"/>
-    <aura:attribute name="is_data_changed" type="Boolean"/>
     <!-- child attributes -->
     <aura:attribute name="columns" type="List"/>
-    <aura:attribute name="draftValues" type="Object"/>
-
 
     <aura:handler name="init" value="{! this }" action="{! c.init}"/>
 
@@ -19,10 +15,6 @@
                                      keyField="cardId"
                                      data="{! item.expenseCards }"
                                      columns="{! v.columns }"
-                                     onrowaction="{! c.handleRowAction }"
-                                     draftValues="{! v.draftValues }"
-                                     onsave="{! c.handleSaveEdition }"
-                                     oncancel="{! c.handleCancelAction }"
                 />
                 <p style="margin-left: 5%; font-weight: bold; display: inline">Total:</p>
                 <p style="margin-left: 29%; font-weight: bold; display: inline">
@@ -32,4 +24,5 @@
             </lightning:accordionSection>
         </aura:iteration>
     </lightning:accordion>
+
 </aura:component>

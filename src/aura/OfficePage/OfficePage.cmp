@@ -1,20 +1,30 @@
 <aura:component description="OfficePage"
                 controller="AdminPageController"
                 implements="flexipage:availableForAllPageTypes,lightning:isUrlAddressable">
+    <!-- user info -->
+    <aura:attribute name="keepers" type="List"/>
+    <aura:attribute name="userName" type="String"/>
     <aura:attribute name="userId" type="Id"/>
     <aura:attribute name="office" type="String"/>
+
     <aura:attribute name="year" type="Integer"/>
     <aura:attribute name="years" type="List"/>
+    <aura:attribute name="months" type="List"/>
     <!--  month for which content is shown -->
     <aura:attribute name="selected_month" type="String" default="January"/>
-    <aura:attribute name="menu_elements" type="List"/>
-    <aura:attribute name="month_expense_cards" type="List"/>
+    <!--  map keeperId => content -->
     <aura:attribute name="expense_cards_by_keeper" type="Map"/>
+    <!--  attributes for navigation menu  -->
+    <aura:attribute name="menu_elements" type="List"/>
+    <aura:attribute name="total_amount" type="Decimal"/>
+    <aura:attribute name="total_income" type="Decimal"/>
+    <!--  attributes for expense cards  -->
+    <aura:attribute name="month_expense_cards" type="List"/>
     <aura:attribute name="expense_cards_by_month" type="Map"/>
     <aura:attribute name="balance" type="Decimal"/>
 
     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
-    <aura:handler name="change" value="{! v.selected_month }" action="{! c.monthChanged}"/>
+    <aura:handler name="change" value="{! v.selected_month }" action="{! c.monthChanged }"/>
 
     <!--  BODY  -->
     <lightning:card>
@@ -33,29 +43,37 @@
                     <!-- / HEADING AREA -->
                 </div>
                 <!-- ACTION BUTTONS -->
-                <!--                            ADD HERE PICKLIST OF KEEPERS -->
+                <lightning:combobox options="{! v.keepers }" label="Users:" value="{! v.userName }"
+                                    placeholder="Select User" onchange="{! c.keeperChanged }"/>
                 <!-- / ACTION BUTTONS -->
             </div>
+            <!-- / LAYOUT GRID -->
+            <!-- PAGE HEADER DETAIL ROW -->
+            <!-- / PAGE HEADER DETAIL ROW -->
         </div>
         <!-- / PAGE HEADER -->
-
-
+        <br/>
         <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_1-of-4">
                 <span>
                     <!-- Navigation menu -->
-                    <c:NavigationMenu menu_elements="{! v.menu_elements }" selected_month="{! v.selected_month }"/>
+                    <c:NavigationMenu selected_month="{! v.selected_month }" menu_elements="{! v.menu_elements }"
+                                      total_amount="{! v.total_amount }" total_income="{! v.total_income }"/>
+                    <p style="padding-left: 5%">Years</p>
+                    <lightning:buttonGroup class="padding">
+                        <aura:iteration items="{! v.years}" var="item">
+                            <lightning:button label="{! item }" onclick="{! c.yearChanged }"/>
+                        </aura:iteration>
+                    </lightning:buttonGroup>
                 </span>
             </div>
             <div class="slds-col slds-size_3-of-4">
                 <span>
                     <!--  Content  -->
-                    <c:ExpenseCards month_expense_cards="{! v.month_expense_cards }"
-                                    is_data_changed="{! v.is_data_changed }"/>
+                    <c:ImmutableExpenseCards month_expense_cards="{! v.month_expense_cards }"/>
                 </span>
             </div>
         </div>
-        <!--  Years -->
     </lightning:card>
     <!--  /BODY  -->
 </aura:component>

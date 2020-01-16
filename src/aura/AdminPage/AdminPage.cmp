@@ -23,9 +23,6 @@
     <!-- monthly expenses by years -->
     <aura:attribute name="monthly_expense_map" type="Map"/>
     <aura:attribute name="monthly_expense" type="List"/>
-    <!-- sum offices' expenses by months by years -->
-    <aura:attribute name="offices_sum_by_month_map" type="Map"/>
-    <aura:attribute name="offices_sum_by_month" type="List"/>
 
     <aura:handler name="init" value="{! this }" action="{! c.init}"/>
 
@@ -33,140 +30,86 @@
 
     <table>
         <tr>
-            <th colspan="2">
+            <th colspan="2" width="30%">
                 <lightning:combobox name="year" label="" options="{! v.year_options }"
                                     onchange="{! c.yearChanged }" value="{! 'Regional Expense ' + v.year }"/>
             </th>
             <aura:iteration items="{! v.offices }" var="office">
-                <th>
+                <th style="background-color: #f4fff9; color: #49a9cb; height: 50px;
+                    vertical-align: center; text-align: center; font-size: large; font-weight: bold;"
+                    onclick="{! c.navigateToOffice }" data-menu-item-id="{! office}">
                     {! office }
                 </th>
             </aura:iteration>
-            <th rowspan="3">
-                Sum:
+            <th rowspan="3" style="background-color: #fbf9d3; color: #db1725; font-size: large;
+                vertical-align: bottom; font-weight: bold; padding-left: 1%;">
+                Summ:
             </th>
         </tr>
         <tr>
-            <td rowspan="2">
+            <td rowspan="2" style="background-color: #d2d2d2; color: #14296a; font-size: large;
+            vertical-align: bottom; font-weight: bold; padding-left: 1%;">
                 Month
             </td>
-            <td>
+            <td style="background-color: #afc3dc; color: #d91329; font-size: large;
+                vertical-align: center; text-align: center; height: 45px; font-weight: bold;">
                 Balance now:
             </td>
             <aura:iteration items="{! v.balance_for_all_years_by_office }" var="balance">
-                <td>
-                    {! balance }
+                <td style="background-color: #afc3dc; font-size: large; font-weight: bold;
+                           vertical-align: center; text-align: center; height: 45px">
+                    <lightning:formattedNumber value="{! balance }"
+                                               maximumFractionDigits="2" minimumFractionDigits="1"/>
                 </td>
             </aura:iteration>
         </tr>
         <tr>
-            <td>
+            <td style="background-color: #ffedd5; color: #d91329; font-weight: bold;
+                vertical-align: center; text-align: center; height: 35px">
                 Monthly Average
             </td>
             <aura:iteration items="{! v.monthly_average_by_office }" var="monthlyAverage">
-                <td>
-                    {! monthlyAverage }
+                <td style="background-color: #ffedd5; font-weight: bold;
+                    vertical-align: center; text-align: center; height: 35px">
+                    <lightning:formattedNumber value="{! monthlyAverage }"
+                                               maximumFractionDigits="2" minimumFractionDigits="2"/>
                 </td>
             </aura:iteration>
         </tr>
+        <aura:iteration items="{! v.monthly_expense }" var="monthData">
+            <tr>
+                <td colspan="2" style="height: 35px; vertical-align: center; padding-left: 1%">
+                    {! monthData.monthName}
+                </td>
+                <aura:iteration items="{! monthData.expenses}" var="expenseAmount">
+                    <td style="height: 35px; vertical-align: center; padding-left: 1%;">
+                        <lightning:formattedNumber value="{! expenseAmount }" maximumFractionDigits="2"/>
+                    </td>
+                </aura:iteration>
+                <td style="background-color: #fbf9d3; font-weight: bold; font-size: larger;
+                    height: 35px; vertical-align: center; padding-left: 1%;">
+                    <lightning:formattedNumber value="{! monthData.totalForAllOffices }" maximumFractionDigits="2"/>
+                </td>
+            </tr>
+        </aura:iteration>
+        <tr>
+            <td colspan="2" style="background-color: #a7a7a7; font-weight: bold; height: 35px;
+                vertical-align: center; padding-left: 1%;">
+                Total:
+            </td>
+            <aura:iteration items="{! v.total_for_all_months_by_office }" var="total">
+                <td style="background-color: #a7a7a7; font-weight: bold; height: 35px;
+                           vertical-align: center; text-align: center;">
+                    <lightning:formattedNumber value="{! total }"
+                                               maximumFractionDigits="2" minimumFractionDigits="1"/>
+                </td>
+            </aura:iteration>
+            <td style="background-color: #a7a7a7; font-weight: bold; height: 35px;
+                           vertical-align: center; text-align: center;">
+                <lightning:formattedNumber value="{! v.total_for_year }"
+                                           maximumFractionDigits="2" minimumFractionDigits="1"/>
+            </td>
+        </tr>
     </table>
-    <!--    <div class="slds-grid slds-wrap">-->
-    <!--        &lt;!&ndash; 1st column MONTHS &ndash;&gt;-->
-    <!--        <div class="slds-col slds-size_1-of-6">-->
-    <!--            <table>-->
-    <!--                <tr>-->
-    <!--                    <td class="first-row-style" colspan="2">-->
-    <!--                        <lightning:combobox name="year" label="" options="{! v.year_options }"-->
-    <!--                                            onchange="{! c.yearChanged }" value="{! 'Regional Expense ' + v.year }"/>-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--                <tr>-->
-    <!--                    <td rowspan="2" class="month-style">-->
-    <!--                        Month-->
-    <!--                    </td>-->
-    <!--                    <td class="balance-style">-->
-    <!--                        Balance Now:-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--                <tr>-->
-    <!--                    <td class="m-average-style">-->
-    <!--                        Monthly Average-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--                <aura:iteration items="{! v.months }" var="month">-->
-    <!--                    <tr>-->
-    <!--                        <td colspan="2">-->
-    <!--                            {! month }-->
-    <!--                        </td>-->
-    <!--                    </tr>-->
-    <!--                </aura:iteration>-->
-    <!--                <tr>-->
-    <!--                    <td class="total-style" colspan="2">-->
-    <!--                        Total:-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--            </table>-->
-    <!--        </div>-->
-    <!--        &lt;!&ndash; 2nd column MONTH DETAILS &ndash;&gt;-->
-    <!--        <div class="slds-col slds-size_4-of-6" style="overflow-x: auto;">-->
-    <!--            <aura:iteration items="{! v.expense_for_year_by_office }" var="office">-->
-    <!--                <div class="slds-dl&#45;&#45;inline__detail">-->
-    <!--                    <table cellspacing="0" cellpadding="0">-->
-    <!--                        &lt;!&ndash; 1st row with offices &ndash;&gt;-->
-    <!--                        <tr>-->
-    <!--                            <td class="first-row-style">-->
-    <!--                                <lightning:button variant="base"-->
-    <!--                                                  label="{! office.office }"-->
-    <!--                                                  onclick="{! c.navigateToOffice }"/>-->
-    <!--                            </td>-->
-    <!--                        </tr>-->
-    <!--                        <tr>-->
-    <!--                            <td>-->
-    <!--                                {! office.balanceForYear }-->
-    <!--                            </td>-->
-    <!--                        </tr>-->
-    <!--                        <tr>-->
-    <!--                            <td>-->
-    <!--                                {! office.monthlyAverage }-->
-    <!--                            </td>-->
-    <!--                        </tr>-->
-    <!--                        <aura:iteration items="{! office.sumByMonth }" var="expense">-->
-    <!--                            <tr>-->
-    <!--                                <td>-->
-    <!--                                    {! expense }-->
-    <!--                                </td>-->
-    <!--                            </tr>-->
-    <!--                        </aura:iteration>-->
-    <!--                        <tr>-->
-    <!--                            <td class="total-style">-->
-    <!--                                {! office.total }-->
-    <!--                            </td>-->
-    <!--                        </tr>-->
-    <!--                    </table>-->
-    <!--                </div>-->
-    <!--            </aura:iteration>-->
-    <!--        </div>-->
-    <!--        &lt;!&ndash; 3rd column with sums &ndash;&gt;-->
-    <!--        <div class="slds-col slds-size_1-of-6">-->
-    <!--            <table>-->
-    <!--                <tr>-->
-    <!--                    <td class="sum-style">-->
-    <!--                        Summ:-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--                <aura:iteration items="{! v.sum_expenses_for_year_by_month }" var="sumExpense">-->
-    <!--                    <tr>-->
-    <!--                        <td>-->
-    <!--                            {! sumExpense }-->
-    <!--                        </td>-->
-    <!--                    </tr>-->
-    <!--                </aura:iteration>-->
-    <!--                <tr>-->
-    <!--                    <td class="total-style">-->
-    <!--                        {! v.total_for_year }-->
-    <!--                    </td>-->
-    <!--                </tr>-->
-    <!--            </table>-->
-    <!--        </div>-->
-    <!--    </div>-->
+
 </aura:component>

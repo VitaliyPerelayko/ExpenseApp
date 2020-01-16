@@ -87,7 +87,6 @@
             <c:TopUpBalance chosenMonth="{# v.selected_month }" year="{# v.year }" keeperId="{# v.userId }"
                             is_shown="{! v.is_top_up_shown}" is_data_changed="{! v.is_data_changed}"/>
         </aura:if>
-        <!--  Years -->
     </lightning:card>
     <!--  /BODY  -->
 </aura:component>
