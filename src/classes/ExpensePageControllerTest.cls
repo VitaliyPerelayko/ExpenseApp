@@ -1,7 +1,7 @@
 @isTest
 private class ExpensePageControllerTest {
 
-    // get Data por page
+    // get Data for page
     @isTest
     static void getMonthExpenseTest() {
         System.debug('========== ExpensePageControllerTest.getMonthExpenseTest start test ==========');
@@ -25,6 +25,28 @@ private class ExpensePageControllerTest {
             }
         }
         System.debug('========== ExpensePageControllerTest.getMonthExpenseTest end test ==========');
+    }
+
+    @isTest
+    static void getMonthExpenseTestNoData() {
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTestNoData start test ==========');
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        String monthExpenses = ExpensePageController.getMonthExpense(testContact.Id, 2019);
+        System.assertEquals(ExpensePageController.NO_DATA, monthExpenses);
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTestNoData end test ==========');
+    }
+
+    @isTest
+    static void getMonthExpenseTestError() {
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTestError start test ==========');
+        Test.startTest();
+        try {
+            ExpensePageController.getMonthExpense('illegal user id', 2019);
+        } catch (Exception ex){
+            System.assertEquals('System.AuraHandledException',ex.getTypeName());
+        }
+        Test.stopTest();
+        System.debug('========== ExpensePageControllerTest.getMonthExpenseTestError end test ==========');
     }
 
     // insert new expense card
@@ -51,6 +73,18 @@ private class ExpensePageControllerTest {
         Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
         System.assertEquals(0, numOfExpenseCards);
         System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTestExceptionOccurred end test ==========');
+    }
+
+    // update ExpenseCards
+    @isTest
+    static void insertNewExpenseCardTest1() {
+        // TODO it
+//        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest start test ==========');
+//        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+//        ExpensePageController.insertNewExpenseCard(testContact.Id, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
+//        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+//        System.assertEquals(1, numOfExpenseCards);
+//        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest end test ==========');
     }
 
     // top up balance of monthly expense
@@ -84,11 +118,15 @@ private class ExpensePageControllerTest {
     @isTest
     static void topUpBalanceTestExceptionOccurred() {
         System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred start test ==========');
-        // TODO it
-//        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
-//        ExpensePageController.insertNewExpenseCard(testContact.Id, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
-//        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
-//        System.assertEquals(1, numOfExpenseCards);
+        Test.startTest();
+        try {
+            ExpensePageController.topUpBalance(2019, 3, 12.6, 'illegal user id');
+        } catch (Exception ex){
+            System.assertEquals('System.AuraHandledException', ex.getTypeName());
+        }
+        Test.stopTest();
+        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+        System.assertEquals(0, numOfExpenseCards);
         System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred end test ==========');
     }
 }

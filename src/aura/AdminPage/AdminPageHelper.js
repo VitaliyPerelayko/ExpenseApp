@@ -32,14 +32,16 @@
                 totalsForYear.set(year, expForYearDTO.total);
                 // set offices
                 const officesList = offisesDTO.office;
-                officesMap.set(year, officesList);
-                // TODO check order in List, and if it will be wrong sort data using Object.entries()
+                officesMap.set(year, officesList.sort());
                 // set balance
-                balancesMap.set(year, Object.values(offisesDTO.balanceForAllYearsByOffice));
+                balancesMap.set(year,
+                    this.sortByOfficeMap(new Map(Object.entries(offisesDTO.balanceForAllYearsByOffice)), officesList));
                 // set monthly average
-                monthlyAverageMap.set(year, Object.values(offisesDTO.monthlyAverageByOffice));
+                monthlyAverageMap.set(year,
+                    this.sortByOfficeMap(new Map(Object.entries(offisesDTO.monthlyAverageByOffice)), officesList));
                 // set total by office
-                totalForAllMonths.set(year, Object.values(offisesDTO.totalForAllMonthsByOffice));
+                totalForAllMonths.set(year,
+                    this.sortByOfficeMap(new Map(Object.entries(offisesDTO.totalForAllMonthsByOffice)), officesList));
                 // set monthly expenses
                 let monthlyExp = [];
                 const monthlyExpDTOMap = new Map(Object.entries(offisesDTO.monthlyExpense));
@@ -48,15 +50,15 @@
                     let totalForOffices = 0;
                     const meDTO = monthlyExpDTOMap.get(m.toString());
                     if (meDTO === undefined) {
-                        for (let o = 0; o < officesList.length; o++){
+                        for (let o = 0; o < officesList.length; o++) {
                             expensesByOffice.push(0);
                         }
                     } else {
                         const expensesMap = new Map(Object.entries(meDTO));
-                        for (let o = 0; o < officesList.length; o++){
+                        for (let o = 0; o < officesList.length; o++) {
                             const officeName = officesList[o];
                             const officeExpense = expensesMap.get(officeName);
-                            if (officeExpense === undefined){
+                            if (officeExpense === undefined) {
                                 expensesByOffice.push(0);
                             } else {
                                 expensesByOffice.push(officeExpense);
@@ -65,7 +67,7 @@
                         }
                     }
                     monthlyExp.push({
-                        monthName: monthNames[m-1],
+                        monthName: monthNames[m - 1],
                         expenses: expensesByOffice,
                         totalForAllOffices: totalForOffices
                     });
@@ -96,6 +98,21 @@
         } catch (e) {
             console.error(e);
         }
+    },
+
+    sortByOfficeMap: function (mapToSort, officesList) {
+        let listToReturn = [];
+        for (let o = 0; o < officesList.length; o++) {
+            const officeName = officesList[o];
+            const number = mapToSort.get(officeName);
+            if (number === undefined) {
+                // just in case
+                listToReturn.push(0);
+            } else {
+                listToReturn.push(number);
+            }
+        }
+        return listToReturn;
     },
 
     validateResponse: function (resp) {

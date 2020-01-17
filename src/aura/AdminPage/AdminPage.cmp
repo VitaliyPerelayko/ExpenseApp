@@ -32,7 +32,8 @@
         <tr>
             <th colspan="2" width="30%">
                 <lightning:combobox name="year" label="" options="{! v.year_options }"
-                                    onchange="{! c.yearChanged }" value="{! 'Regional Expense ' + v.year }"/>
+                                    onchange="{! c.yearChanged }" value="{! 'Regional Expense ' + v.year }"
+                                    placeholder="{! 'Regional Expense ' + v.year }"/>
             </th>
             <aura:iteration items="{! v.offices }" var="office">
                 <th style="background-color: #f4fff9; color: #49a9cb; height: 50px;

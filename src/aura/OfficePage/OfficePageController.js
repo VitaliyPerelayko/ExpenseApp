@@ -25,7 +25,8 @@
             const id = component.get("v.userId");
             const monthNames = component.get("v.months");
             const selectedMonth = component.get("v.selected_month");
-            helper.getContentForPageForMonth(component, id, year, monthNames, selectedMonth);
+            const office = component.get("v.office");
+            helper.getContentForPageForMonth(component, office, year, monthNames, selectedMonth);
         } catch (e) {
             console.error(e);
         }
@@ -34,22 +35,21 @@
     keeperChanged: function (component, event, helper) {
         try {
             const keeperId = event.getParam("value");
-            const listKeepers = Object.values(component.get("v.keepers"));
-            console.log(listKeepers);
-            // console.log(keeperId + "======" + keeperName);
-            // const month = component.get("v.selected_month");
-            // const keeperContent = component.get("v.expense_cards_by_keeper").get(keeperId);
-            // // set user info
-            // component.set("v.userName", keeperName);
-            // component.set("v.userId", keeperId);
-            // // attributes for navigation component
-            // component.set("v.menu_elements", keeperContent.menuElements);
-            // component.set("v.total_amount", keeperContent.totalAmount);
-            // component.set("v.total_income", keeperContent.totalIncome);
-            // // attributes for content
-            // component.set("v.expense_cards_by_month", keeperContent.expenseCards);
-            // component.set("v.month_expense_cards", keeperContent.expenseCards.get(month));
-            // component.set("v.balance", keeperContent.balance);
+            const keeperName = component.get("v.id_LastName_map").get(keeperId);
+            console.log(keeperId + "======" + keeperName);
+            const month = component.get("v.selected_month");
+            const keeperContent = component.get("v.expense_cards_by_keeper").get(keeperId);
+            // set user info
+            component.set("v.userLastName", keeperName);
+            component.set("v.userId", keeperId);
+            // attributes for navigation component
+            component.set("v.menu_elements", keeperContent.menuElements);
+            component.set("v.total_amount", keeperContent.totalAmount);
+            component.set("v.total_income", keeperContent.totalIncome);
+            // attributes for content
+            component.set("v.expense_cards_by_month", keeperContent.expenseCards);
+            component.set("v.month_expense_cards", keeperContent.expenseCards.get(month));
+            component.set("v.balance", keeperContent.balance);
         } catch (e) {
             console.error(e);
         }

@@ -31,7 +31,6 @@ public with sharing class ExpenseCardTriggerHelper {
         return new Monthly_Expense__c(Keeper__c = er.Card_Keeper__c, MonthDate__c = er.CardDate__c.toStartOfMonth());
     }
 
-    // TODO maybe I can better?
     private static List<Monthly_Expense__c> filterMeToInsert(List<Monthly_Expense__c> monthlyExpenses){
         List<Monthly_Expense__c> filteredList = new List<Monthly_Expense__c>();
         for (Monthly_Expense__c me: monthlyExpenses){

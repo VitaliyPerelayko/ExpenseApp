@@ -1,5 +1,7 @@
 public class ExpensePageController {
 
+    public static final String NO_DATA = 'NO_DATA';
+
     @AuraEnabled
     public static String getMonthExpense(Id keeperId, Integer year) {
         try {
@@ -12,7 +14,11 @@ public class ExpensePageController {
                     AND MonthDate__c >= :startYear
                     AND MonthDate__c <= :endYear
             ]);
-            return JSON.serialize(ExpensePageDTOS.mapToDTOMonthlyExpense(monthlyExpenses));
+            if (monthlyExpenses.isEmpty()) {
+                return NO_DATA;
+            } else {
+                return JSON.serialize(ExpensePageDTOS.mapToDTOMonthlyExpense(monthlyExpenses));
+            }
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
         }
@@ -24,6 +30,7 @@ public class ExpensePageController {
             Expense_Card__c ec = new Expense_Card__c(Card_Keeper__c = keeperId, Amount__c = amount,
                     CardDate__c = ecDate, Description__c = description);
             insert ec;
+            System.debug('New ExpenseCard has just created: ' + ec);
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
         }
@@ -56,7 +63,7 @@ public class ExpensePageController {
                 }
                 listToUpdate.add(ec);
             }
-            System.debug('==========' + listToUpdate + '==============');
+            System.debug('Expense Cards to update :' + listToUpdate);
             update listToUpdate;
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
@@ -72,6 +79,7 @@ public class ExpensePageController {
                     SELECT Id, MonthDate__c, Balance__c
                     FROM Monthly_Expense__c
                     WHERE MonthDate__c = :meDate
+                    AND Keeper__c = :keeperId
             ];
             if (meList.isEmpty()) {
                 monthlyExpense = new Monthly_Expense__c(
@@ -93,6 +101,7 @@ public class ExpensePageController {
         try {
             Expense_Card__c ec = new Expense_Card__c(Id = ecId);
             delete ec;
+            System.debug('ExpenseCard with id=' + ecId + 'has just deleted');
         } catch (Exception ex) {
             throw new AuraHandledException(ex.getMessage());
         }

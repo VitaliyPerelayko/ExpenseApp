@@ -89,12 +89,20 @@ public class AdminPageDTOS {
         for (String office : mapB.keySet()) {
             tempMap.put(office, mapB.get(office));
         }
-        for (Integer i = 1; i < years.size(); i++) {
-            Map<String, Decimal> mapOfBalances = expensesForYearDTOMap.get(years[i]).offices.balanceForAllYearsByOffice;
-            for (String office : mapOfBalances.keySet()) {
-                Decimal balance = mapOfBalances.get(office) + tempMap.get(office);
-                tempMap.put(office, balance);
-                mapOfBalances.put(office, balance);
+        if (years.size() > 1) {
+            for (Integer i = 1; i < years.size(); i++) {
+                Map<String, Decimal> mapOfBalances = expensesForYearDTOMap.get(years[i]).offices.balanceForAllYearsByOffice;
+                for (String office : mapOfBalances.keySet()) {
+                    Decimal balance = 0;
+                    if (mapOfBalances.get(office) != null){
+                        balance = mapOfBalances.get(office);
+                    }
+                    if (tempMap.get(office) != null){
+                        balance += tempMap.get(office);
+                    }
+                    tempMap.put(office, balance);
+                    mapOfBalances.put(office, balance);
+                }
             }
         }
         return expensesForYearDTOMap.values();
