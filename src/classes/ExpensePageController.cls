@@ -38,6 +38,8 @@ public class ExpensePageController {
 
     @AuraEnabled
     public static void updateExpenseCards(String changedExpenseCards) {
+        try {
+        System.debug('JSON with expense cards to update:' + changedExpenseCards);
         List<ExpensePageDTOS.ExpenseCardDTO> listOfChangedExpenseCards = (List<ExpensePageDTOS.ExpenseCardDTO>)
                 JSON.deserialize(changedExpenseCards, List<ExpensePageDTOS.ExpenseCardDTO>.class);
         Map<Id, ExpensePageDTOS.ExpenseCardDTO> mupOfChangedExpenseCards =
@@ -45,7 +47,6 @@ public class ExpensePageController {
         for (ExpensePageDTOS.ExpenseCardDTO ec : listOfChangedExpenseCards) {
             mupOfChangedExpenseCards.put(ec.cardId, ec);
         }
-        try {
             List<Expense_Card__c> listToUpdate = new List<Expense_Card__c>();
             Map<Id, Expense_Card__c> ecMap = new Map<Id, Expense_Card__c>([
                     SELECT Id, Amount__c, Description__c, CardDate__c

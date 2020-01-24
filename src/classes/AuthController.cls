@@ -3,7 +3,6 @@ public class AuthController {
     public static final String NO_SUCH_USER = 'There is no any user with such an username';
     public static final String PASSWORD_DOES_NOT_MACH = 'Password doesn\'t mach';
 
-    //TODO add later password and token encryption
     @AuraEnabled
     public static String login(String username, String password) {
         List<Contact> contacts = [

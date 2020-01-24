@@ -1,6 +1,8 @@
 @isTest
 public class TestDataFactory {
 
+    public static final String BAD_USER_ID = '0032w000005WtqJAAS';
+
     public static Contact createContact(String cLastName, String cEmail,
             String password, String office, Boolean isAdmin) {
         Contact newContact = new Contact(LastName = cLastName,

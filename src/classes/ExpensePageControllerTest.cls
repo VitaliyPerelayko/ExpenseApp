@@ -41,9 +41,9 @@ private class ExpensePageControllerTest {
         System.debug('========== ExpensePageControllerTest.getMonthExpenseTestError start test ==========');
         Test.startTest();
         try {
-            ExpensePageController.getMonthExpense('illegal user id', 2019);
-        } catch (Exception ex){
-            System.assertEquals('System.AuraHandledException',ex.getTypeName());
+            ExpensePageController.getMonthExpense(TestDataFactory.BAD_USER_ID, 2019);
+        } catch (Exception ex) {
+            System.assertEquals('System.AuraHandledException', ex.getTypeName());
         }
         Test.stopTest();
         System.debug('========== ExpensePageControllerTest.getMonthExpenseTestError end test ==========');
@@ -65,7 +65,7 @@ private class ExpensePageControllerTest {
         System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTestExceptionOccurred start test ==========');
         Test.startTest();
         try {
-            ExpensePageController.insertNewExpenseCard('0032w000005WtqJAAS', 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
+            ExpensePageController.insertNewExpenseCard(TestDataFactory.BAD_USER_ID, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
         } catch (Exception ex) {
             System.assertEquals('System.AuraHandledException', ex.getTypeName());
         }
@@ -77,14 +77,41 @@ private class ExpensePageControllerTest {
 
     // update ExpenseCards
     @isTest
-    static void insertNewExpenseCardTest1() {
-        // TODO it
-//        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest start test ==========');
-//        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
-//        ExpensePageController.insertNewExpenseCard(testContact.Id, 23.1, Date.newInstance(2019, 10, 11), 'present for birthday');
-//        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
-//        System.assertEquals(1, numOfExpenseCards);
-//        System.debug('========== ExpensePageControllerTest.insertNewExpenseCardTest end test ==========');
+    static void updateExpenseCardsTest() {
+        System.debug('========== ExpensePageControllerTest.updateExpenseCardsTest start test ==========');
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        List<Date> datesForExpenseCards =
+                TestDataFactory.createDateListForExpenseCards(Date.newInstance(2019, 1, 8), Date.newInstance(2019, 1, 15));
+        List<Expense_Card__c> expenseCards = TestDataFactory.createExpenseCards(testContact.Id, datesForExpenseCards);
+        Id cardId1 = expenseCards[0].Id;
+        Id cardId2 = expenseCards[1].Id;
+        String expenseCardsDTOJson = '[{"cardId":"' + cardId1 +
+                '","description":"pumpkin and candles"},{"cardId":"' + cardId2 + '","amount":"13.13"}]';
+        System.debug(expenseCardsDTOJson);
+        ExpensePageController.updateExpenseCards(expenseCardsDTOJson);
+        Map<Id, Expense_Card__c> expenseCardsFromDB = new Map<Id, Expense_Card__c>([
+                SELECT Id, Description__c, Amount__c, CardDate__c
+                FROM Expense_Card__c
+        ]);
+        System.assertEquals(8, expenseCardsFromDB.size());
+        System.assertEquals(expenseCards[0].Amount__c, expenseCardsFromDB.get(cardId1).Amount__c);
+        System.assertEquals(13.13, expenseCardsFromDB.get(cardId2).Amount__c);
+        System.assertEquals('pumpkin and candles', expenseCardsFromDB.get(cardId1).Description__c);
+        System.assertEquals(expenseCards[1].Description__c, expenseCardsFromDB.get(cardId2).Description__c);
+        System.debug('========== ExpensePageControllerTest.updateExpenseCardsTest end test ==========');
+    }
+
+    @isTest
+    static void updateExpenseCardsTestError() {
+        System.debug('========== ExpensePageControllerTest.updateExpenseCardsTestError start test ==========');
+        String expenseCardsDTOJson = '[{cardId:"ffff' +
+                '","description":"pumpkin and candles"},{"cardId":fffff,"amount":"13.13"}]';
+        try {
+            ExpensePageController.updateExpenseCards(expenseCardsDTOJson);
+        } catch (Exception ex) {
+            System.assertEquals('System.AuraHandledException', ex.getTypeName());
+        }
+        System.debug('========== ExpensePageControllerTest.updateExpenseCardsTestError end test ==========');
     }
 
     // top up balance of monthly expense
@@ -120,13 +147,28 @@ private class ExpensePageControllerTest {
         System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred start test ==========');
         Test.startTest();
         try {
-            ExpensePageController.topUpBalance(2019, 3, 12.6, 'illegal user id');
-        } catch (Exception ex){
+            ExpensePageController.topUpBalance(2019, 3, 12.6, TestDataFactory.BAD_USER_ID);
+        } catch (Exception ex) {
             System.assertEquals('System.AuraHandledException', ex.getTypeName());
         }
         Test.stopTest();
-        Integer numOfExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
-        System.assertEquals(0, numOfExpenseCards);
+        Integer numOfMonthlyExpenses = [SELECT COUNT() FROM Monthly_Expense__c];
+        System.assertEquals(0, numOfMonthlyExpenses);
         System.debug('========== ExpensePageControllerTest.topUpBalanceTestExceptionOccurred end test ==========');
+    }
+
+    // delete ExpenseCard
+    @isTest
+    static void deleteExpenseCardTest() {
+        System.debug('========== ExpensePageControllerTest.deleteExpenseCardTest start test ==========');
+        Contact testContact = TestDataFactory.createContact('Block', 'night@light.pharmacy', '11', 'Office 2', false);
+        List<Date> datesForExpenseCards =
+                TestDataFactory.createDateListForExpenseCards(Date.newInstance(2019, 1, 8), Date.newInstance(2019, 1, 15));
+        List<Expense_Card__c> expenseCards = TestDataFactory.createExpenseCards(testContact.Id, datesForExpenseCards);
+        Id cardId1 = expenseCards[0].Id;
+        ExpensePageController.deleteExpenseCard(cardId1);
+        Integer numberExpenseCards = [SELECT COUNT() FROM Expense_Card__c];
+        System.assertEquals(7, numberExpenseCards);
+        System.debug('========== ExpensePageControllerTest.deleteExpenseCardTest end test ==========');
     }
 }
